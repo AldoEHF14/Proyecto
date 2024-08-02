@@ -1,10 +1,14 @@
 %{
+# define ID 257
+# define INT 259
+#define DOUBLE 260
 
 %}
 
 /* lex definitions */
    
 digits [0-9]+
+decimal [0-9]+\.[0-9]*
    
 
 
@@ -34,6 +38,7 @@ digits [0-9]+
    /* integers */
 
 {digits}	 {yylval.ival=atoi(yytext); return INT;}
+{decimal}    {yylval.ival=atof(yytext); return DOUBLE;}
 
 
    /* Cualquier otra cosa */
