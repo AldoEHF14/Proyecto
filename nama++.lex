@@ -1,9 +1,41 @@
 %{
-# define ID 257
-# define INT 259
-# define DOUBLE 260
-# define COMMA 261
+#include <string.h>
 
+# define ID 100
+# define INT 101
+# define DOUBLE 102
+# define COMMA 103
+
+# define IF 104
+# define THEN 105
+# define ELSE 106
+# define WHILE 107
+# define FOR 108
+
+# define TWOp 109
+# define PYC 110
+# define LPAREN 111
+# define RPAREN 112
+# define DOT 113
+
+# define SUM 114
+# define REST 115
+# define PRODC 116
+# define DIVIDE 117
+# define MODULO 118
+
+# define ASSIGN 119
+# define EQ 120
+# define MN 121
+# define MY 122
+# define MNQ 123
+# define MYQ 124
+# define DISTN 125
+
+
+# define AND 126
+# define OR 127
+# define NOT 128
 
 
 %}
@@ -11,53 +43,57 @@
 /* lex definitions */
    
 digits [0-9]+
-decimal [0-9]+\.[0-9]*
+float [0-9]+\.[0-9]*
+
+simbolos_especiales \[ | \] | \( | \) | \"| \+ | ,
+cadena [a-zA-Z0-9 ]*
+comentario /*[_a-zA-Z0-9 ]*/
    
 
 
 %%
 [ \r\t] {continue;}
 
-   /* reserved words */
+   /* reserved words -*/
 
-if       {return IF;}
-then     {return THEN;}
-else     {return ELSE;}
+if       {ECHO; return IF;}
+then     {ECHO; return THEN;}
+else     {ECHO; return ELSE;}
 while    {ECHO; return WHILE;}
-for  	   {return FOR;}
-function {return FUNCTION;}
-var      {return VAR;}
+for  	   {ECHO; return FOR;}
 
 
 
  /* punctuations */
-":" {return COLON;}
+":" {return TWOp;}
+";" {return PYC;}
 "(" {return LPAREN;}
 ")" {return RPAREN;}
 "." {return DOT;}
 
  /* Operaciones aritmeticas */
-"+" {return PLUS;}
-"-" {return MINUS;}
-"*" {return TIMES;}
+"+" {return SUM;}
+"-" {return REST;}
+"*" {return PRODC;}
 "/" {return DIVIDE;}
 "%" {return MODULO;}
 
 
  /* Operaciones  relacionales*/
-"=" {return EQ;}
-"<>" {return NEQ;}
-"<" {return LT;}
-">" {return MN;}
-"<=" {return LE;}
-":=" {return ASSIGN;}
-"!" {return NEGATION;}
+"=" {return ASSIGN;}
+"==" {return EQ;}
+"<" {return MN;}
+">" {return MY;}
+"<=" {return MNQ;}
+">=" {return MYQ;}
+"!=" {return DISTN;}
+
+
+ /* Operaciones Logicos*/
+
 "||" {return OR}
 "&&" {return AND}
-
-
-
-
+"!" {return NOT}
 
 
    /* Identifiers. */
@@ -77,3 +113,19 @@ var      {return VAR;}
 
 
 %%
+
+
+
+/* Este main es solamente de prueba.*/
+
+int main(int argc, char *argv[]) {
+   if (argc < 2) {
+      printf("\n%s <archivo fuente>\n", argv[0]);
+      return 0;
+   }
+   yyin = fopen(argv[1], "r");
+
+   while(yylex());
+
+   fclose(yyin);
+}
