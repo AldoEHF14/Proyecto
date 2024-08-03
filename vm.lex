@@ -37,18 +37,40 @@
 # define OR 127
 # define NOT 128
 
+# define LKEY 129
+# define RKEY 130
+
+typedef union  {
+        int pos;
+        int ival;
+        char* sval;
+} YYSTYPE;
+
+YYSTYPE yylval;
+
+
+char* Cadena(char *s)
+{
+   char* p = (char*) malloc(strlen(s)+1);
+   strcpy(p,s);
+   return p;
+}
+
+
 
 %}
 
 /* lex definitions */
    
 digits [0-9]+
-float [0-9]+\.[0-9]*
-
-simbolos_especiales \[ | \] | \( | \) | \"| \+ | ,
+/*float [0-9]+\.[0-9]**/
+signs_numbers [\- | \+]
+simbolos_especiales \[ | \] | \( | \) | \"| \+ | \- | ,
 cadena [a-zA-Z0-9 ]*
 comentario /*[_a-zA-Z0-9 ]*/
-   
+  
+float {signs_numbers}[0-9]*\.[0-9]*
+
 
 
 %%
@@ -65,14 +87,16 @@ for  	   {ECHO; return FOR;}
 
 
  /* punctuations */
-":" {return TWOp;}
-";" {return PYC;}
+":" {ECHO;return TWOp;}
+";" {ECHO;return PYC;}
 "(" {return LPAREN;}
 ")" {return RPAREN;}
 "." {return DOT;}
+"{" {return LKEY;}
+"}" {return RKEY;}
 
  /* Operaciones aritmeticas */
-"+" {return SUM;}
+"+" {  return SUM;}
 "-" {return REST;}
 "*" {return PRODC;}
 "/" {return DIVIDE;}
@@ -91,9 +115,9 @@ for  	   {ECHO; return FOR;}
 
  /* Operaciones Logicos*/
 
-"||" {return OR}
-"&&" {return AND}
-"!" {return NOT}
+"||" {return OR;}
+"&&" {return AND;}
+"!" {return NOT;}
 
 
    /* Identifiers. */
@@ -103,8 +127,8 @@ for  	   {ECHO; return FOR;}
 
    /* integers */
 
-{digits}	 {yylval.ival=atoi(yytext); return INT;}
-{decimal}    {yylval.ival=atof(yytext); return DOUBLE;}
+{digits}	 {ECHO; yylval.ival=atoi(yytext); return INT;}
+{float}    {ECHO;  yylval.ival=atof(yytext); return DOUBLE;}
 
 
    /* Cualquier otra cosa */
