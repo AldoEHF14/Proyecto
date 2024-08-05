@@ -476,15 +476,15 @@ int yy_flex_debug = 0;
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
-#line 1 "nama++.lex"
-#line 2 "nama++.lex"
+#line 1 "vm.lex"
+#line 2 "vm.lex"
 #include <string.h>
 
 # define ID 100
 # define INT 101
 # define DOUBLE 102
 # define COMMA 103
-
+/* control structures (selectives & iterative)  */
 # define IF 104
 # define THEN 105
 # define ELSE 106
@@ -535,12 +535,9 @@ char* Cadena(char *s)
    return p;
 }
 
-
-
-#line 541 "lex.yy.c"
+#line 539 "lex.yy.c"
 /* lex definitions */
-/*float [0-9]+\.[0-9]**/
-#line 544 "lex.yy.c"
+#line 541 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -757,9 +754,10 @@ YY_DECL
 		}
 
 	{
-#line 76 "nama++.lex"
+#line 69 "vm.lex"
 
-#line 763 "lex.yy.c"
+
+#line 761 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -818,178 +816,178 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 77 "nama++.lex"
+#line 71 "vm.lex"
 {continue;}
 	YY_BREAK
-/* reserved words -*/
+/* reserved words */
 case 2:
 YY_RULE_SETUP
-#line 81 "nama++.lex"
+#line 75 "vm.lex"
 {ECHO; return IF;}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 82 "nama++.lex"
+#line 76 "vm.lex"
 {ECHO; return THEN;}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 83 "nama++.lex"
+#line 77 "vm.lex"
 {ECHO; return ELSE;}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 84 "nama++.lex"
+#line 78 "vm.lex"
 {ECHO; return WHILE;}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 85 "nama++.lex"
+#line 79 "vm.lex"
 {ECHO; return FOR;}
 	YY_BREAK
 /* punctuations */
 case 7:
 YY_RULE_SETUP
-#line 90 "nama++.lex"
+#line 82 "vm.lex"
 {ECHO;return TWOp;}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 91 "nama++.lex"
+#line 83 "vm.lex"
 {ECHO;return PYC;}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 92 "nama++.lex"
+#line 84 "vm.lex"
 {return LPAREN;}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 93 "nama++.lex"
+#line 85 "vm.lex"
 {return RPAREN;}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 94 "nama++.lex"
+#line 86 "vm.lex"
 {return DOT;}
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 95 "nama++.lex"
+#line 87 "vm.lex"
 {return LKEY;}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 96 "nama++.lex"
+#line 88 "vm.lex"
 {return RKEY;}
 	YY_BREAK
 /* Operaciones aritmeticas */
 case 14:
 YY_RULE_SETUP
-#line 99 "nama++.lex"
-{  return SUM;}
+#line 91 "vm.lex"
+{return SUM;}
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 100 "nama++.lex"
+#line 92 "vm.lex"
 {return REST;}
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 101 "nama++.lex"
+#line 93 "vm.lex"
 {return PRODC;}
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 102 "nama++.lex"
+#line 94 "vm.lex"
 {return DIVIDE;}
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 103 "nama++.lex"
+#line 95 "vm.lex"
 {return MODULO;}
 	YY_BREAK
 /* Operaciones  relacionales*/
 case 19:
 YY_RULE_SETUP
-#line 107 "nama++.lex"
+#line 98 "vm.lex"
 {return ASSIGN;}
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 108 "nama++.lex"
+#line 99 "vm.lex"
 {return EQ;}
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 109 "nama++.lex"
+#line 100 "vm.lex"
 {return MN;}
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 110 "nama++.lex"
+#line 101 "vm.lex"
 {return MY;}
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 111 "nama++.lex"
+#line 102 "vm.lex"
 {return MNQ;}
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 112 "nama++.lex"
+#line 103 "vm.lex"
 {return MYQ;}
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 113 "nama++.lex"
+#line 104 "vm.lex"
 {return DISTN;}
 	YY_BREAK
 /* Operaciones Logicos*/
 case 26:
 YY_RULE_SETUP
-#line 118 "nama++.lex"
+#line 108 "vm.lex"
 {return OR;}
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 119 "nama++.lex"
+#line 109 "vm.lex"
 {return AND;}
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 120 "nama++.lex"
+#line 110 "vm.lex"
 {return NOT;}
 	YY_BREAK
 /* Identifiers. */
 case 29:
 YY_RULE_SETUP
-#line 125 "nama++.lex"
+#line 113 "vm.lex"
 {yylval.sval=Cadena(yytext); return ID;}
 	YY_BREAK
 /* integers */
 case 30:
 YY_RULE_SETUP
-#line 130 "nama++.lex"
+#line 115 "vm.lex"
 {ECHO; yylval.ival=atoi(yytext); return INT;}
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 131 "nama++.lex"
+#line 116 "vm.lex"
 {ECHO;  yylval.ival=atof(yytext); return DOUBLE;}
 	YY_BREAK
 /* Cualquier otra cosa */
 case 32:
 YY_RULE_SETUP
-#line 135 "nama++.lex"
+#line 118 "vm.lex"
 { printf("\nToken desconocido: '%s'.\n", yytext); }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 139 "nama++.lex"
+#line 122 "vm.lex"
 ECHO;
 	YY_BREAK
-#line 993 "lex.yy.c"
+#line 991 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1994,7 +1992,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 139 "nama++.lex"
+#line 122 "vm.lex"
 
 
 

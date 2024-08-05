@@ -5,7 +5,7 @@
 # define INT 101
 # define DOUBLE 102
 # define COMMA 103
-
+/* control structures (selectives & iterative)  */
 # define IF 104
 # define THEN 105
 # define ELSE 106
@@ -56,35 +56,27 @@ char* Cadena(char *s)
    return p;
 }
 
-
-
 %}
 
 /* lex definitions */
-   
-digits [0-9]+
-/*float [0-9]+\.[0-9]**/
-signs_numbers [\- | \+]
-simbolos_especiales \[ | \] | \( | \) | \"| \+ | \- | ,
-cadena [a-zA-Z0-9 ]*
-comentario /*[_a-zA-Z0-9 ]*/
-  
-float {signs_numbers}[0-9]*\.[0-9]*
-
-
+digits 	[0-9]+
+signs 	[\- | \+]
+special_symbol	 \[ | \] | \( | \) | \"| \+ | \- | ,
+string 	[a-zA-Z0-9 ]*
+comment /*[_a-zA-Z0-9 ]*/
+float {signs}[0-9]*\.[0-9]*
 
 %%
+
 [ \r\t] {continue;}
 
-   /* reserved words -*/
+	/* reserved words */
 
 if       {ECHO; return IF;}
 then     {ECHO; return THEN;}
 else     {ECHO; return ELSE;}
 while    {ECHO; return WHILE;}
-for  	   {ECHO; return FOR;}
-
-
+for  	 {ECHO; return FOR;}
 
  /* punctuations */
 ":" {ECHO;return TWOp;}
@@ -96,12 +88,11 @@ for  	   {ECHO; return FOR;}
 "}" {return RKEY;}
 
  /* Operaciones aritmeticas */
-"+" {  return SUM;}
+"+" {return SUM;}
 "-" {return REST;}
 "*" {return PRODC;}
 "/" {return DIVIDE;}
 "%" {return MODULO;}
-
 
  /* Operaciones  relacionales*/
 "=" {return ASSIGN;}
@@ -112,27 +103,19 @@ for  	   {ECHO; return FOR;}
 ">=" {return MYQ;}
 "!=" {return DISTN;}
 
-
  /* Operaciones Logicos*/
 
 "||" {return OR;}
 "&&" {return AND;}
 "!" {return NOT;}
 
-
-   /* Identifiers. */
-
+	/* Identifiers. */
 [_a-zA-Z][a-zA-Z0-9]* {yylval.sval=Cadena(yytext); return ID;}
-   
-
-   /* integers */
-
-{digits}	 {ECHO; yylval.ival=atoi(yytext); return INT;}
-{float}    {ECHO;  yylval.ival=atof(yytext); return DOUBLE;}
-
-
-   /* Cualquier otra cosa */
-.	 { printf("\nToken desconocido: '%s'.\n", yytext); }
+	/* integers */
+{digits}	{ECHO; yylval.ival=atoi(yytext); return INT;}
+{float}		{ECHO;  yylval.ival=atof(yytext); return DOUBLE;}
+	/* Cualquier otra cosa */
+. { printf("\nToken desconocido: '%s'.\n", yytext); }
 
 
 
