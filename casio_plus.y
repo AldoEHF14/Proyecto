@@ -34,7 +34,7 @@ std::map<std::string, int> sym;
 %token AND
 %token OR
 %token FOR TO
-%token DO DOWHILE
+%token DO 
 
 %left AND
 %left OR
@@ -65,7 +65,7 @@ stmt:
          | IF '(' expr ')' stmt %prec IFX                   { $$ = opr(IF, 2, $3, $5); }
          | IF '(' expr ')' stmt ELSE stmt                   { $$ = opr(IF, 3, $3, $5, $7); }
          | FOR VARIABLE '=' expr TO expr '{' stmt_list '}'  { $$ = opr(FOR, 4, id($2), $4, $6, $8); }
-         | DO stmt WHILE '(' expr ')' ';'                   { $$ = opr(DOWHILE, $2, $5)}
+         | DO stmt WHILE '(' expr ')' ';'                   { $$ = opr(DOWHILE, 2, $2, $5)}
          | '{' stmt_list '}'                   { $$ = $2; }
          ;
 
@@ -183,10 +183,10 @@ int ex(nodeType *p) {
                   ex(p->opr.op[1]);
                return 0;
 
-            case DOWHILE:
+            case DO:
                do {
-                  ex(p->opr.op[1]);
-               }while(ex(p->opr.op[0]));
+                  ex(p->opr.op[0]);
+               }while(ex(p->opr.op[1]));
 
             case IF:
                if (ex(p->opr.op[0]))

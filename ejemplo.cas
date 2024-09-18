@@ -1,4 +1,10 @@
-for i = 1 to 5 {
-    print 2*i;
+for holamundo = 1 to 5 {
+    print 2*holamundo;
 }
+var=1;
+do {
+    print 3*var;
+    var = var + 1;
+} while(var <= 5);
+
 .
