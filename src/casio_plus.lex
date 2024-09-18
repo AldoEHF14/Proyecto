@@ -11,6 +11,10 @@ char yylval_name[50];
 
 %}
 
+/* lex definitions */
+digit 	[0-9]+
+sign 	[-+]?
+
 %%
 
 [-()<>=+*/,;{}.] { return *yytext; }
@@ -21,6 +25,7 @@ char yylval_name[50];
 "!="        return NE;
 "&&"        return AND;
 "||"        return OR;
+"!"	    return NOT;
 
 "while"     return WHILE;
 "if"        return IF;
@@ -35,6 +40,10 @@ char yylval_name[50];
                             strcpy(yylval.name, yytext);
                             return VARIABLE;
                         }
+
+{sign}{digit}*"."{digit}*   { yylval.fValue = atof(yytext); return FLOAT;}
+
+
 [0-9]+  {
             yylval.iValue = atoi(yytext);
             return INTEGER;
