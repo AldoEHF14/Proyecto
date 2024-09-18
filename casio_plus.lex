@@ -28,7 +28,7 @@ char yylval_name[50];
 "for"       return FOR;
 "to"        return TO;
 "do"        return DO;
-"while"     return DOWHILE;
+
 
 
 [a-zA-Z][a-zA-Z0-9]*    { 

@@ -65,7 +65,7 @@ stmt:
          | IF '(' expr ')' stmt %prec IFX                   { $$ = opr(IF, 2, $3, $5); }
          | IF '(' expr ')' stmt ELSE stmt                   { $$ = opr(IF, 3, $3, $5, $7); }
          | FOR VARIABLE '=' expr TO expr '{' stmt_list '}'  { $$ = opr(FOR, 4, id($2), $4, $6, $8); }
-         | DO stmt DOWHILE '(' expr ')' ';'                   { $$ = opr(DOWHILE, $2, $5)}
+         | DO stmt WHILE '(' expr ')' ';'                   { $$ = opr(DOWHILE, $2, $5)}
          | '{' stmt_list '}'                   { $$ = $2; }
          ;
 
