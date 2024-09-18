@@ -19,7 +19,6 @@ int yyerror(const char *s);
 std::map<std::string, int> sym;
 %}
 
-/* Declaración de Yacc que generará una Unión en C */
 %union {
     int iValue;                 /* Valor entero */
     int sIndex;                /* Índice de la tabla de símbolos */
@@ -35,6 +34,7 @@ std::map<std::string, int> sym;
 %token AND
 %token OR
 %token FOR TO
+%token DO DOWHILE
 
 %left AND
 %left OR
@@ -57,14 +57,15 @@ function:
          ;
 
 stmt:
-         ';'                                   { $$ = opr(';', 2, NULL, NULL); }
-         | expr ';'                            { $$ = $1; }
-         | PRINT  expr ';'                     { $$ = opr(PRINT, 1, $2); }
-         | VARIABLE '=' expr ';'               { $$ = opr('=', 2, id($1), $3); }
-         | WHILE '(' expr ')' stmt             { $$ = opr(WHILE, 2, $3, $5); }
-         | IF '(' expr ')' stmt %prec IFX      { $$ = opr(IF, 2, $3, $5); }
-         | IF '(' expr ')' stmt ELSE stmt      { $$ = opr(IF, 3, $3, $5, $7); }
-         | FOR VARIABLE '=' expr TO expr '{' stmt_list '}' { $$ = opr(FOR, 4, id($2), $4, $6, $8); }
+         ';'                                                { $$ = opr(';', 2, NULL, NULL); }
+         | expr ';'                                         { $$ = $1; }
+         | PRINT  expr ';'                                  { $$ = opr(PRINT, 1, $2); }
+         | VARIABLE '=' expr ';'                            { $$ = opr('=', 2, id($1), $3); }
+         | WHILE '(' expr ')' stmt                          { $$ = opr(WHILE, 2, $3, $5); }
+         | IF '(' expr ')' stmt %prec IFX                   { $$ = opr(IF, 2, $3, $5); }
+         | IF '(' expr ')' stmt ELSE stmt                   { $$ = opr(IF, 3, $3, $5, $7); }
+         | FOR VARIABLE '=' expr TO expr '{' stmt_list '}'  { $$ = opr(FOR, 4, id($2), $4, $6, $8); }
+         | DO stmt DOWHILE '(' expr ')' ';'                   { $$ = opr(DOWHILE, $2, $5)}
          | '{' stmt_list '}'                   { $$ = $2; }
          ;
 
@@ -98,18 +99,18 @@ expr:
 nodeType *con(int value) {
    nodeType *p;
 
-   /* allocate node */
+   
    if((p = (nodeType*) malloc(sizeof(conNodeType))) == NULL)
       yyerror("out of memory");
 
-   /* copy information */
+  
    p->type = typeCon;
    p->con.value = value;
 
    return p;
 }
 
-//nodeType *id(char *name) {
+
 nodeType *id(const char* name) {
     nodeType *p;
 
@@ -140,7 +141,6 @@ nodeType *opr(int oper, int nops, ...) {
    if ((p = (nodeType*)malloc(size)) == NULL)
       yyerror("out of memory");
 
-   /* copy information */
    p->type = typeOpr;
    p->opr.oper = oper;
    p->opr.nops = nops;
@@ -182,6 +182,11 @@ int ex(nodeType *p) {
                while(ex(p->opr.op[0]))
                   ex(p->opr.op[1]);
                return 0;
+
+            case DOWHILE:
+               do {
+                  ex(p->opr.op[1]);
+               }while(ex(p->opr.op[0]));
 
             case IF:
                if (ex(p->opr.op[0]))
