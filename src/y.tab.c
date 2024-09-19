@@ -82,7 +82,7 @@ static int lbl;
 nodeType *opr(int oper, int nops, ...);
 nodeType *id(const char* name);
 nodeType *con(int value);
-//nodeType *conf(float value);
+nodeType *conf(float value);
 void freeNode(nodeType *p);
 int ex(nodeType *p);
 int yyerror(const char *s); 
@@ -1393,7 +1393,7 @@ yyreduce:
 
   case 18: /* expr: FLOAT  */
 #line 82 "casio_plus.y"
-                                 { (yyval.nPtr) = con((yyvsp[0].fValue));  	     }
+                                 { (yyval.nPtr) = conf((yyvsp[0].fValue));  	     }
 #line 1398 "y.tab.c"
     break;
 
@@ -1696,7 +1696,7 @@ yyreturnlab:
 #line 102 "casio_plus.y"
 
 
-/*
+
 nodeType *conf(float value) {
    nodeType *p;
 
@@ -1709,7 +1709,7 @@ nodeType *conf(float value) {
    p->con.valuef = value;
 
    return p;
-}*/
+}
 
 
 
@@ -1785,9 +1785,11 @@ int ex(nodeType *p) {
    if (!p) return 0;
 
    switch(p->type) {
-      case typeCon: 
-         return p->con.value;
-
+      case typeCon:
+	 if (p->con.valuef != 0.0f || p->con.value == 0)
+         	return p->con.valuef;
+	 else
+		return p->con.value;
       case typeId: 
          return sym[p->id.name];
 
@@ -1813,7 +1815,10 @@ int ex(nodeType *p) {
                return 0;
 
             case PRINT: 
-               printf("%d\n", ex(p->opr.op[0]));
+	       if (p->opr.op[0]->type == typeCon && p->opr.op[0]->con.valuef != 0.0f)
+	       	   printf("%f\n", ex(p->opr.op[0]));
+	       else  
+		   printf("%d\n", ex(p->opr.op[0]));
                return 0;
 
             case ';':
@@ -1821,7 +1826,10 @@ int ex(nodeType *p) {
                return ex(p->opr.op[1]);
 
             case '=':
-               return sym[p->opr.op[0]->id.name] = ex(p->opr.op[1]);
+	       if (p->opr.op[1]->type == typeCon && p->opr.op[1]->con.valuef != 0.0f)
+               	   return sym[p->opr.op[0]->id.name] = ex(p->opr.op[1]);
+	       else
+               	   return sym[p->opr.op[0]->id.name] = ex(p->opr.op[1]);
 
             case UMINUS:
                return -ex(p->opr.op[0]);
@@ -1897,6 +1905,19 @@ int ex(nodeType* p) {
             ex(p->opr.op[1]);  // Cuerpo del while
             printf("\tgoto L%03d\n", lbl1);
             printf("L%03d:\n", lbl2);
+            break;
+	case DO:
+	    lbl1 = lbl++;
+	    lbl2 = lbl++;
+            printf("L%03d:\n", lbl1);
+            //ex(p->opr.op[0]);  // Condición del while
+            //printf("\tif_false t%d goto L%03d\n", tempCount - 1, lbl1);
+            ex(p->opr.op[0]);  // Cuerpo del while
+            //printf("\tgoto L%03d\n", lbl1);
+            ex(p->opr.op[1]);  // Condición del while
+            printf("\tif_false t%d goto L%03d\n", tempCount - 1, lbl1);
+            //printf("L%03d:\n", lbl2);
+            //printf("L%03d:\n", lbl1);
             break;
         case FOR:
             // FOR loop: p->opr.op[0] -> init; p->opr.op[1] -> condition; p->opr.op[2] -> increment; p->opr.op[3] -> body
