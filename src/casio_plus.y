@@ -43,7 +43,7 @@ std::map<std::string, int> sym;
 %left OR
 %left GE LE EQ NE '>' '<'
 %left '+' '-'
-%left '*' '/' '%'
+%left '*' '/' ':'
 %nonassoc UMINUS
 %nonassoc NOT
 %type <nPtr> stmt expr stmt_list
@@ -78,24 +78,25 @@ stmt_list:
          ;
 
 expr:
-         INTEGER                 { $$ = con($1); }
-	 | FLOAT	 	 { $$ = con($1); }
-         | VARIABLE              { $$ = id($1); }
-         | '-' expr %prec UMINUS { $$ = opr(UMINUS, 1, $2); }
+         INTEGER                 { $$ = con($1); 	     }
+	 | FLOAT	 	 { $$ = con($1);  	     }
+         | VARIABLE              { $$ = id($1); 	     }
+         | '-' expr %prec UMINUS { $$ = opr(UMINUS, 1, $2);  }
          | expr '+' expr         { $$ = opr('+', 2, $1, $3); }
          | expr '-' expr         { $$ = opr('-', 2, $1, $3); }
          | expr '*' expr         { $$ = opr('*', 2, $1, $3); }
          | expr '/' expr         { $$ = opr('/', 2, $1, $3); }
          | expr '<' expr         { $$ = opr('<', 2, $1, $3); }
          | expr '>' expr         { $$ = opr('>', 2, $1, $3); }
-         | expr GE expr          { $$ = opr(GE, 2, $1, $3); }
-         | expr LE expr          { $$ = opr(LE, 2, $1, $3); }
-         | expr NE expr          { $$ = opr(NE, 2, $1, $3); }
-         | expr EQ expr          { $$ = opr(EQ, 2, $1, $3); }
+         | expr ':' expr	 { $$ = opr(':', 2, $1, $3); }
+	 | expr GE expr          { $$ = opr(GE, 2, $1, $3);  }
+	 | expr LE expr          { $$ = opr(LE, 2, $1, $3);  }
+         | expr NE expr          { $$ = opr(NE, 2, $1, $3);  }
+         | expr EQ expr          { $$ = opr(EQ, 2, $1, $3);  }
          | expr AND expr         { $$ = opr(AND, 2, $1, $3); }
-         | expr OR expr          { $$ = opr(OR, 2, $1, $3); }
-	 | NOT expr		 { $$ = opr(NOT, 1, $2); }
-         | '(' expr ')'          { $$ = $2; }
+         | expr OR expr          { $$ = opr(OR, 2, $1, $3);  }
+	 | NOT expr		 { $$ = opr(NOT, 1, $2);     }
+         | '(' expr ')'          { $$ = $2; 		     }
          ;
 
 %%
@@ -377,6 +378,9 @@ int ex(nodeType* p) {
                 break;
             case '>':
                 printf("\t%s = t%d > t%d\n", temp, tempCount - 3, tempCount - 2);
+                break;
+	    case ':':
+                printf("\t%s = t%d : t%d\n", temp, tempCount - 3, tempCount - 2);
                 break;
             case GE:
                 printf("\t%s = t%d >= t%d\n", temp, tempCount - 3, tempCount - 2);

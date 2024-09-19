@@ -17,7 +17,7 @@ sign 	[-+]?
 
 %%
 
-[-()<>=+*/,;{}.] { return *yytext; }
+[-()<>=+:*/,;{}.] { return *yytext; }
 
 ">="        return GE;
 "<="        return LE;

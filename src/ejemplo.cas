@@ -1,5 +1,6 @@
 mivariable = 12;
 
+result = mivariable : 2;
 
 for holamundo = 1 to 5 {
     print 2*holamundo;
