@@ -1,14 +1,11 @@
+mivariable = 12;
+
+
 for holamundo = 1 to 5 {
     print 2*holamundo;
 }
-var=1;
-do {
-    print 3*var;
-    var = var + 1;
-} while(var <= 5);
-var1 = 1;
-print !var1
 
-print -11.3 ;
+flag = 0;
+flag = !flag;
 
 .

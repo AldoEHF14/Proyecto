@@ -93,8 +93,8 @@ expr:
          | expr NE expr          { $$ = opr(NE, 2, $1, $3); }
          | expr EQ expr          { $$ = opr(EQ, 2, $1, $3); }
          | expr AND expr         { $$ = opr(AND, 2, $1, $3); }
-	 | NOT expr		{ $$ = opr(NOT, 1, $2); }
-         | expr OR expr         { $$ = opr(OR, 2, $1, $3); }
+         | expr OR expr          { $$ = opr(OR, 2, $1, $3); }
+	 | NOT expr		 { $$ = opr(NOT, 1, $2); }
          | '(' expr ')'          { $$ = $2; }
          ;
 
@@ -280,19 +280,16 @@ int ex(nodeType* p) {
     static int tempCount = 0;  // Para generar temporales
     char temp[10];  // Almacena el nombre del temporal
     if (!p)
-        return 0;
-    
+        return 0; 
     switch (p->type) {
     case typeCon:
         sprintf(temp, "t%d", tempCount++);
         printf("\t%s = %d\n", temp, p->con.value);
         break;
-
     case typeId:
         sprintf(temp, "t%d", tempCount++);
         printf("\t%s = %s\n", temp, p->id.name );
         break;
-
     case typeOpr:
         switch (p->opr.oper) {
         case WHILE:
@@ -337,10 +334,14 @@ int ex(nodeType* p) {
                 printf("L%03d:\n", lbl1);
             }
             break;
-
+	case NOT:
+		ex(p->opr.op[0]);  // Evaluar la expresión
+		sprintf(temp, "t%d", tempCount++);
+                printf("\t%s = !t%d\n",temp, tempCount-2);
+	    break;	
         case PRINT:
             ex(p->opr.op[0]);
-            printf("\tprint t%d\n", tempCount - 1);
+            printf("\tprint t%d\n", tempCount - 2);
             break;
 
         case '=':
@@ -395,9 +396,7 @@ int ex(nodeType* p) {
             case OR:
                 printf("\t%s = t%d || t%d\n", temp, tempCount - 3, tempCount - 2);
                 break;
-	    case NOT:
-                printf("\t%s = ! t%d\n", temp, tempCount - 1);
-		break;	
+	    	
             }
             return 0;
         }
