@@ -31,7 +31,6 @@ sign 	[-+]?
 "if"        return IF;
 "print"     return PRINT;
 "for"       return FOR;
-"to"        return TO;
 "do"        return DO;
 
 

@@ -36,17 +36,17 @@ std::map<std::string, int> sym;
 %nonassoc ELSE
 %token AND
 %token OR
-%token FOR TO
+%token FOR
 %token DO 
 
 %left AND
 %left OR
 %left GE LE EQ NE '>' '<'
 %left '+' '-'
-%left '*' '/' ':'
+%left '*' '/' ':' ';'
 %nonassoc UMINUS
 %nonassoc NOT
-%type <nPtr> stmt expr stmt_list
+%type <nPtr> stmt expr stmt_list expr_init expr_cond expr_cnt
 
 %%
 
@@ -60,17 +60,32 @@ function:
          ;
 
 stmt:
-         ';'                                                { $$ = opr(';', 2, NULL, NULL); }
-         | expr ';'                                         { $$ = $1; }
-         | PRINT  expr ';'                                  { $$ = opr(PRINT, 1, $2); }
-         | VARIABLE '=' expr ';'                            { $$ = opr('=', 2, id($1), $3); }
-         | WHILE '(' expr ')' stmt                          { $$ = opr(WHILE, 2, $3, $5); }
-         | IF '(' expr ')' stmt %prec IFX                   { $$ = opr(IF, 2, $3, $5); }
-         | IF '(' expr ')' stmt ELSE stmt                   { $$ = opr(IF, 3, $3, $5, $7); }
-         | FOR VARIABLE '=' expr TO expr '{' stmt_list '}'  { $$ = opr(FOR, 4, id($2), $4, $6, $8); }
-         | DO stmt WHILE '(' expr ')' ';'                   { $$ = opr(DO, 2, $2, $5); }
-         | '{' stmt_list '}'                   { $$ = $2; }
+         ';'                                                			{ $$ = opr(';', 2, NULL, NULL); }
+         | expr ';'                                         			{ $$ = $1; }
+         | PRINT  expr ';'                                  			{ $$ = opr(PRINT, 1, $2); }
+         | VARIABLE '=' expr ';'                            			{ $$ = opr('=', 2, id($1), $3); }
+         | WHILE '(' expr ')' stmt                          			{ $$ = opr(WHILE, 2, $3, $5); }
+         | IF '(' expr ')' stmt %prec IFX                   			{ $$ = opr(IF, 2, $3, $5); }
+         | IF '(' expr ')' stmt ELSE stmt                   			{ $$ = opr(IF, 3, $3, $5, $7); }
+         | FOR '(' expr_init  ';' expr_cond ';' expr_cnt ')' stmt 		{ $$ = opr(FOR, 4, $3, $5, $7, $9); }
+	 | DO stmt WHILE '(' expr ')' ';'                   			{ $$ = opr(DO, 2, $2, $5); }
+         | '{' stmt_list '}'                   					{ $$ = $2; }
          ;
+
+expr_init:
+	 VARIABLE '=' VARIABLE		{ $$ = opr('=', 2, id($1), id($3)); }
+	 | VARIABLE '=' INTEGER		{ $$ = opr('=', 2, id($1), con($3));}
+	 ;
+
+expr_cond:
+	 expr				{ $$ = $1; }
+	 ;
+
+expr_cnt:
+	 VARIABLE '=' expr		{ $$ = opr('=', 2, id($1), $3); }
+	 | expr 			{ $$ = $1; }
+	 ; 
+
 
 stmt_list:
          stmt                    { $$ = $1; }
@@ -184,121 +199,26 @@ void freeNode(nodeType *p) {
    free (p);
 }
 
-/*
-int ex(nodeType *p) {
-
-   if (!p) return 0;
-
-   switch(p->type) {
-      case typeCon:
-	 if (p->con.valuef != 0.0f || p->con.value == 0)
-         	return p->con.valuef;
-	 else
-		return p->con.value;
-      case typeId: 
-         return sym[p->id.name];
-
-      case typeOpr: 
-
-         switch(p->opr.oper) {
-
-            case WHILE: 
-               while(ex(p->opr.op[0]))
-                  ex(p->opr.op[1]);
-               return 0;
-
-            case DO:
-               do {
-                  ex(p->opr.op[0]);
-               }while(ex(p->opr.op[1]));
-               return 0;
-            case IF:
-               if (ex(p->opr.op[0]))
-                  ex(p->opr.op[1]);
-               else if (p->opr.nops > 2)
-                  ex(p->opr.op[2]);
-               return 0;
-
-            case PRINT: 
-	       if (p->opr.op[0]->type == typeCon && p->opr.op[0]->con.valuef != 0.0f)
-	       	   printf("%f\n", ex(p->opr.op[0]));
-	       else  
-		   printf("%d\n", ex(p->opr.op[0]));
-               return 0;
-
-            case ';':
-               ex(p->opr.op[0]);
-               return ex(p->opr.op[1]);
-
-            case '=':
-	       if (p->opr.op[1]->type == typeCon && p->opr.op[1]->con.valuef != 0.0f)
-               	   return sym[p->opr.op[0]->id.name] = ex(p->opr.op[1]);
-	       else
-               	   return sym[p->opr.op[0]->id.name] = ex(p->opr.op[1]);
-
-            case UMINUS:
-               return -ex(p->opr.op[0]);
-
-            case '+':
-               return ex(p->opr.op[0]) + ex(p->opr.op[1]);
-
-            case '-': 
-               return ex(p->opr.op[0]) - ex(p->opr.op[1]);
-
-            case '*': 
-               return ex(p->opr.op[0]) * ex(p->opr.op[1]);
-
-            case '/': 
-               return ex(p->opr.op[0]) / ex(p->opr.op[1]);
-
-            case '<': 
-               return ex(p->opr.op[0]) < ex(p->opr.op[1]);
-
-            case '>': 
-               return ex(p->opr.op[0]) > ex(p->opr.op[1]);
-
-            case GE: 
-               return ex(p->opr.op[0]) >= ex(p->opr.op[1]);
-
-            case LE: 
-               return ex(p->opr.op[0]) <= ex(p->opr.op[1]);
-
-            case EQ:
-               return ex(p->opr.op[0]) == ex(p->opr.op[1]);
-
-            case AND: 
-               return ex(p->opr.op[0]) && ex(p->opr.op[1]);
-               
-            case OR: 
-               return ex(p->opr.op[0]) || ex(p->opr.op[1]);
-
-            case FOR:
-               sym[p->opr.op[0]->id.name] = ex(p->opr.op[1]);
-               while (sym[p->opr.op[0]->id.name] <= ex(p->opr.op[2])) {
-                  ex(p->opr.op[3]);
-                  sym[p->opr.op[0]->id.name]++;
-               }
-               return 0;
-         }
-   }
-   return 0;
-}*/
-
 int ex(nodeType* p) {
     int lbl1, lbl2;
     static int tempCount = 0;  // Para generar temporales
     char temp[10];  // Almacena el nombre del temporal
     if (!p)
-        return 0; 
+        return 0;
+
     switch (p->type) {
     case typeCon:
-        sprintf(temp, "t%d", tempCount++);
-        printf("\t%s = %d\n", temp, p->con.value);
+        // Para constantes, imprimir el valor directamente
+        //printf("\t%d\n", p->con.value);
+        //printf("entro aqui");
         break;
+
     case typeId:
-        sprintf(temp, "t%d", tempCount++);
-        printf("\t%s = %s\n", temp, p->id.name );
+        // Para variables, imprimir el nombre directamente
+        //printf("\t%s\n", p->id.name);
+        //printf("aquiiiiiii");
         break;
+
     case typeOpr:
         switch (p->opr.oper) {
         case WHILE:
@@ -306,42 +226,39 @@ int ex(nodeType* p) {
             lbl2 = lbl++;
             printf("L%03d:\n", lbl1);
             ex(p->opr.op[0]);  // Condición del while
-            printf("\tif_false t%d goto L%03d\n", tempCount - 1, lbl2);
+            printf("\tif_false t%d goto L%03d\n", tempCount - 1,lbl2);
             ex(p->opr.op[1]);  // Cuerpo del while
             printf("\tgoto L%03d\n", lbl1);
             printf("L%03d:\n", lbl2);
             break;
-	case DO:
-	    lbl1 = lbl++;
-	    lbl2 = lbl++;
-            printf("L%03d:\n", lbl1);
-            //ex(p->opr.op[0]);  // Condición del while
-            //printf("\tif_false t%d goto L%03d\n", tempCount - 1, lbl1);
-            ex(p->opr.op[0]);  // Cuerpo del while
-            //printf("\tgoto L%03d\n", lbl1);
-            ex(p->opr.op[1]);  // Condición del while
-            printf("\tif_false t%d goto L%03d\n", tempCount - 1, lbl1);
-            //printf("L%03d:\n", lbl2);
-            //printf("L%03d:\n", lbl1);
-            break;
+
         case FOR:
-            // FOR loop: p->opr.op[0] -> init; p->opr.op[1] -> condition; p->opr.op[2] -> increment; p->opr.op[3] -> body
             ex(p->opr.op[0]);  // Inicialización (i = 0)
             lbl1 = lbl++;      // Etiqueta de inicio del bucle
             lbl2 = lbl++;      // Etiqueta de salida del bucle
             printf("L%03d:\n", lbl1);
+
             ex(p->opr.op[1]);  // Condición (i < 10)
-            printf("\tif_false t%d goto L%03d\n", tempCount - 1, lbl2);
+            if (p->opr.op[1]->type == typeId) {
+        // Si la condición involucra una variable, usar el nombre de la variable
+                 //printf("\tif_false %s goto L%03d\n", p->opr.op[0]->id.name, lbl2);
+                 printf("\tif_false %s goto L%03d\n", p->opr.op[0]->id.name, lbl2);
+            	  
+	    } else {
+            // Si es una operación con temporales
+                 printf("\tif_false t%d goto L%03d\n", tempCount - 1, lbl2);
+             }
+            //printf("\tif_false t%d goto L%03d\n",  tempCount - 1,lbl2);
             ex(p->opr.op[3]);  // Cuerpo del bucle (a = a + i)
             ex(p->opr.op[2]);  // Incremento (i = i + 1)
             printf("\tgoto L%03d\n", lbl1);
             printf("L%03d:\n", lbl2);  // Salida del bucle
             break;
+
         case IF:
             ex(p->opr.op[0]);  // Condición del if
             lbl1 = lbl++;
             if (p->opr.nops > 2) {
-                // if-else
                 lbl2 = lbl++;
                 printf("\tif_false t%d goto L%03d\n", tempCount - 1, lbl1);
                 ex(p->opr.op[1]);  // Bloque if
@@ -350,31 +267,51 @@ int ex(nodeType* p) {
                 ex(p->opr.op[2]);  // Bloque else
                 printf("L%03d:\n", lbl2);
             } else {
-                // Solo if
                 printf("\tif_false t%d goto L%03d\n", tempCount - 1, lbl1);
                 ex(p->opr.op[1]);  // Bloque if
                 printf("L%03d:\n", lbl1);
             }
             break;
-	case NOT:
-		ex(p->opr.op[0]);  // Evaluar la expresión
-		sprintf(temp, "t%d", tempCount++);
-                printf("\t%s = !t%d\n",temp, tempCount-2);
-	    break;	
-        case PRINT:
-            ex(p->opr.op[0]);
-            printf("\tprint t%d\n", tempCount - 2);
-            break;
 
         case '=':
-            ex(p->opr.op[1]);  // Evaluar la expresión de la derecha
-            printf("\t%s = t%d\n", p->opr.op[0]->id.name , tempCount - 1);
+            // Evaluar el valor de la derecha y asignarlo a la variable de la izquierda
+            ex(p->opr.op[1]);
+            if (p->opr.op[1]->type == typeOpr) {
+                printf("\t%s = t%d\n", p->opr.op[0]->id.name, tempCount - 1);
+            } else if (p->opr.op[1]->type == typeCon) {
+        // Si es una constante, asignar el valor directamente
+                 printf("\t%s = %d\n", p->opr.op[0]->id.name, p->opr.op[1]->con.value);
+            } else if (p->opr.op[1]->type == typeId) {
+        // Si es una variable, asignar el valor de la variable
+                 printf("\t%s = %s\n", p->opr.op[0]->id.name, p->opr.op[1]->id.name);
+            }
             break;
 
-        case UMINUS:
-            ex(p->opr.op[0]);  // Evaluar la expresión
+        case '+':
+            // Suma directa de los operandos sin temporales
+            ex(p->opr.op[0]);
+            ex(p->opr.op[1]);
             sprintf(temp, "t%d", tempCount++);
-            printf("\t%s = -t%d\n", temp, tempCount - 2);
+            if (p->opr.op[0]->type == typeId) {
+                printf("\t%s = %s + %d\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->con.value);
+            } else {
+                printf("\t%s = %d + %d\n", temp, p->opr.op[0]->con.value, p->opr.op[1]->con.value);
+            }
+            break;
+
+        case PRINT:
+            ex(p->opr.op[0]);
+            if (p->opr.op[0]->type == typeId) {
+                 printf("\tprint %s\n", p->opr.op[0]->id.name);
+            } else if (p->opr.op[0]->type == typeCon) {
+                printf("\tprint %d\n", p->opr.op[0]->con.value);
+            } else if (p->opr.op[0]->type == typeOpr) {
+                 printf("\tprint t%d\n", tempCount - 1);  
+            }
+            break;
+        case UMINUS:
+            ex(p->opr.op[0]);
+            printf("\t-%d\n", p->opr.op[0]->con.value);
             break;
 
         default:
@@ -382,51 +319,177 @@ int ex(nodeType* p) {
             ex(p->opr.op[1]);  // Lado derecho
             sprintf(temp, "t%d", tempCount++);
             switch (p->opr.oper) {
-            case '+':
-                printf("\t%s = t%d + t%d\n", temp, tempCount - 3, tempCount - 2);
-                break;
             case '-':
-                printf("\t%s = t%d - t%d\n", temp, tempCount - 3, tempCount - 2);
+                if (p->opr.op[0]->type == typeId && p->opr.op[1]->type == typeId) {
+                    // Ambos operandos son variables>
+                    printf("\t%s = %s - %s\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->id.name);
+                } else if (p->opr.op[0]->type == typeCon && p->opr.op[1]->type == typeCon) {
+                    // Ambos operandos son constantes
+                    printf("\t%s = %d - %d\n", temp, p->opr.op[0]->con.value, p->opr.op[1]->con.value);
+                } else if (p->opr.op[0]->type == typeId && p->opr.op[1]->type == typeCon) {
+                    // El primer operando es una variable y el segundo es una constante
+                    printf("\t%s = %s - %d\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->con.value);
+                } else if (p->opr.op[0]->type == typeCon && p->opr.op[1]->type == typeId) {
+                    // El primer operando es una constante y el segundo es una variable
+                    printf("\t%s = %d - %s\n", temp, p->opr.op[0]->con.value, p->opr.op[1]->id.name);
+                 } 
                 break;
             case '*':
-                printf("\t%s = t%d * t%d\n", temp, tempCount - 3, tempCount - 2);
+                if (p->opr.op[0]->type == typeId && p->opr.op[1]->type == typeId) {
+                    // Ambos operandos son variables>
+                    printf("\t%s = %s * %s\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->id.name);
+                } else if (p->opr.op[0]->type == typeCon && p->opr.op[1]->type == typeCon) {
+                    // Ambos operandos son constantes
+                    printf("\t%s = %d * %d\n", temp, p->opr.op[0]->con.value, p->opr.op[1]->con.value);
+                } else if (p->opr.op[0]->type == typeId && p->opr.op[1]->type == typeCon) {
+                    // El primer operando es una variable y el segundo es una constante
+                    printf("\t%s = %s * %d\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->con.value);
+                } else if (p->opr.op[0]->type == typeCon && p->opr.op[1]->type == typeId) {
+                    // El primer operando es una constante y el segundo es una variable
+                    printf("\t%s = %d * %s\n", temp, p->opr.op[0]->con.value, p->opr.op[1]->id.name);
+                 } 
                 break;
             case '/':
-                printf("\t%s = t%d / t%d\n", temp, tempCount - 3, tempCount - 2);
+                if (p->opr.op[0]->type == typeId && p->opr.op[1]->type == typeId) {
+                    // Ambos operandos son variables>
+                    printf("\t%s = %s / %s\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->id.name);
+                } else if (p->opr.op[0]->type == typeCon && p->opr.op[1]->type == typeCon) {
+                    // Ambos operandos son constantes
+                    printf("\t%s = %d / %d\n", temp, p->opr.op[0]->con.value, p->opr.op[1]->con.value);
+                } else if (p->opr.op[0]->type == typeId && p->opr.op[1]->type == typeCon) {
+                    // El primer operando es una variable y el segundo es una constante
+                    printf("\t%s = %s / %d\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->con.value);
+                } else if (p->opr.op[0]->type == typeCon && p->opr.op[1]->type == typeId) {
+                    // El primer operando es una constante y el segundo es una variable
+                    printf("\t%s = %d / %s\n", temp, p->opr.op[0]->con.value, p->opr.op[1]->id.name);
+                 } 
                 break;
             case '<':
-                printf("\t%s = t%d < t%d\n", temp, tempCount - 3, tempCount - 2);
+                if (p->opr.op[0]->type == typeId && p->opr.op[1]->type == typeId) {
+                    // Ambos operandos son variables>
+                    printf("\t%s = %s < %s\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->id.name);
+                } else if (p->opr.op[0]->type == typeCon && p->opr.op[1]->type == typeCon) {
+                    // Ambos operandos son constantes
+                    printf("\t%s = %d < %d\n", temp, p->opr.op[0]->con.value, p->opr.op[1]->con.value);
+                } else if (p->opr.op[0]->type == typeId && p->opr.op[1]->type == typeCon) {
+                    // El primer operando es una variable y el segundo es una constante
+                    printf("\t%s = %s < %d\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->con.value);
+                } else if (p->opr.op[0]->type == typeCon && p->opr.op[1]->type == typeId) {
+                    // El primer operando es una constante y el segundo es una variable
+                    printf("\t%s = %d < %s\n", temp, p->opr.op[0]->con.value, p->opr.op[1]->id.name);
+                 } 
                 break;
+
             case '>':
-                printf("\t%s = t%d > t%d\n", temp, tempCount - 3, tempCount - 2);
+                if (p->opr.op[0]->type == typeId && p->opr.op[1]->type == typeId) {
+                    // Ambos operandos son variables>
+                    printf("\t%s = %s > %s\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->id.name);
+                } else if (p->opr.op[0]->type == typeCon && p->opr.op[1]->type == typeCon) {
+                    // Ambos operandos son constantes
+                    printf("\t%s = %d > %d\n", temp, p->opr.op[0]->con.value, p->opr.op[1]->con.value);
+                } else if (p->opr.op[0]->type == typeId && p->opr.op[1]->type == typeCon) {
+                    // El primer operando es una variable y el segundo es una constante
+                    printf("\t%s = %s > %d\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->con.value);
+                } else if (p->opr.op[0]->type == typeCon && p->opr.op[1]->type == typeId) {
+                    // El primer operando es una constante y el segundo es una variable
+                    printf("\t%s = %d > %s\n", temp, p->opr.op[0]->con.value, p->opr.op[1]->id.name);
+                 } 
                 break;
-	    case ':':
-                printf("\t%s = t%d : t%d\n", temp, tempCount - 3, tempCount - 2);
-                break;
+
             case GE:
-                printf("\t%s = t%d >= t%d\n", temp, tempCount - 3, tempCount - 2);
+                if (p->opr.op[0]->type == typeId && p->opr.op[1]->type == typeId) {
+                    // Ambos operandos son variables>
+                    printf("\t%s = %s >= %s\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->id.name);
+                } else if (p->opr.op[0]->type == typeCon && p->opr.op[1]->type == typeCon) {
+                    // Ambos operandos son constantes
+                    printf("\t%s = %d >= %d\n", temp, p->opr.op[0]->con.value, p->opr.op[1]->con.value);
+                } else if (p->opr.op[0]->type == typeId && p->opr.op[1]->type == typeCon) {
+                    // El primer operando es una variable y el segundo es una constante
+                    printf("\t%s = %s >= %d\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->con.value);
+                } else if (p->opr.op[0]->type == typeCon && p->opr.op[1]->type == typeId) {
+                    // El primer operando es una constante y el segundo es una variable
+                    printf("\t%s = %d >= %s\n", temp, p->opr.op[0]->con.value, p->opr.op[1]->id.name);
+                 } 
                 break;
             case LE:
-                printf("\t%s = t%d <= t%d\n", temp, tempCount - 3, tempCount - 2);
+                if (p->opr.op[0]->type == typeId && p->opr.op[1]->type == typeId) {
+                    // Ambos operandos son variables>
+                    printf("\t%s = %s <= %s\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->id.name);
+                } else if (p->opr.op[0]->type == typeCon && p->opr.op[1]->type == typeCon) {
+                    // Ambos operandos son constantes
+                    printf("\t%s = %d <= %d\n", temp, p->opr.op[0]->con.value, p->opr.op[1]->con.value);
+                } else if (p->opr.op[0]->type == typeId && p->opr.op[1]->type == typeCon) {
+                    // El primer operando es una variable y el segundo es una constante
+                    printf("\t%s = %s <= %d\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->con.value);
+                } else if (p->opr.op[0]->type == typeCon && p->opr.op[1]->type == typeId) {
+                    // El primer operando es una constante y el segundo es una variable
+                    printf("\t%s = %d <= %s\n", temp, p->opr.op[0]->con.value, p->opr.op[1]->id.name);
+                 }            
                 break;
             case NE:
-                printf("\t%s = t%d != t%d\n", temp, tempCount - 3, tempCount - 2);
+                if (p->opr.op[0]->type == typeId && p->opr.op[1]->type == typeId) {
+                    // Ambos operandos son variables<
+                    printf("\t%s = %s != %s\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->id.name);
+                } else if (p->opr.op[0]->type == typeCon && p->opr.op[1]->type == typeCon) {
+                    // Ambos operandos son constantes
+                    printf("\t%s = %d != %d\n", temp, p->opr.op[0]->con.value, p->opr.op[1]->con.value);
+                } else if (p->opr.op[0]->type == typeId && p->opr.op[1]->type == typeCon) {
+                    // El primer operando es una variable y el segundo es una constante
+                    printf("\t%s = %s != %d\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->con.value);
+                } else if (p->opr.op[0]->type == typeCon && p->opr.op[1]->type == typeId) {
+                    // El primer operando es una constante y el segundo es una variable
+                    printf("\t%s = %d != %s\n", temp, p->opr.op[0]->con.value, p->opr.op[1]->id.name);
+                 }
                 break;
             case EQ:
-                printf("\t%s = t%d == t%d\n", temp, tempCount - 3, tempCount - 2);
+                if (p->opr.op[0]->type == typeId && p->opr.op[1]->type == typeId) {
+                    // Ambos operandos son variables
+                    printf("\t%s = %s = %s\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->id.name);
+                } else if (p->opr.op[0]->type == typeCon && p->opr.op[1]->type == typeCon) {
+                    // Ambos operandos son constantes
+                    printf("\t%s = %d = %d\n", temp, p->opr.op[0]->con.value, p->opr.op[1]->con.value);
+                } else if (p->opr.op[0]->type == typeId && p->opr.op[1]->type == typeCon) {
+                    // El primer operando es una variable y el segundo es una constante
+                    printf("\t%s = %s = %d\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->con.value);
+                } else if (p->opr.op[0]->type == typeCon && p->opr.op[1]->type == typeId) {
+                    // El primer operando es una constante y el segundo es una variable
+                    printf("\t%s = %d = %s\n", temp, p->opr.op[0]->con.value, p->opr.op[1]->id.name);
+                 }
                 break;
             case AND:
-                printf("\t%s = t%d && t%d\n", temp, tempCount - 3, tempCount - 2);
+                if (p->opr.op[0]->type == typeId && p->opr.op[1]->type == typeId) {
+                    // Ambos operandos son variables
+                    printf("\t%s = %s && %s\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->id.name);
+                } else if (p->opr.op[0]->type == typeCon && p->opr.op[1]->type == typeCon) {
+                    // Ambos operandos son constantes
+                    printf("\t%s = %d && %d\n", temp, p->opr.op[0]->con.value, p->opr.op[1]->con.value);
+                } else if (p->opr.op[0]->type == typeId && p->opr.op[1]->type == typeCon) {
+                    // El primer operando es una variable y el segundo es una constante
+                    printf("\t%s = %s && %d\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->con.value);
+                } else if (p->opr.op[0]->type == typeCon && p->opr.op[1]->type == typeId) {
+                    // El primer operando es una constante y el segundo es una variable
+                    printf("\t%s = %d && %s\n", temp, p->opr.op[0]->con.value, p->opr.op[1]->id.name);
+                 }
                 break;
             case OR:
-                printf("\t%s = t%d || t%d\n", temp, tempCount - 3, tempCount - 2);
-                break;
-	    	
+                if (p->opr.op[0]->type == typeId && p->opr.op[1]->type == typeId) {
+                    // Ambos operandos son variables
+                    printf("\t%s = %s || %s\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->id.name);
+                } else if (p->opr.op[0]->type == typeCon && p->opr.op[1]->type == typeCon) {
+                    // Ambos operandos son constantes
+                    printf("\t%s = %d || %d\n", temp, p->opr.op[0]->con.value, p->opr.op[1]->con.value);
+                } else if (p->opr.op[0]->type == typeId && p->opr.op[1]->type == typeCon) {
+                    // El primer operando es una variable y el segundo es una constante
+                    printf("\t%s = %s || %d\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->con.value);
+                } else if (p->opr.op[0]->type == typeCon && p->opr.op[1]->type == typeId) {
+                    // El primer operando es una constante y el segundo es una variable
+                    printf("\t%s = %d || %s\n", temp, p->opr.op[0]->con.value, p->opr.op[1]->id.name);
+                 }
             }
-            return 0;
+            break;
         }
     }
-    return 0 ;
+    return 0;
 }
 
 int main(int argc, char **argv) {
