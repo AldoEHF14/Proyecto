@@ -65,14 +65,13 @@ extern int yydebug;
     AND = 266,                     /* AND  */
     OR = 267,                      /* OR  */
     FOR = 268,                     /* FOR  */
-    TO = 269,                      /* TO  */
-    DO = 270,                      /* DO  */
-    GE = 271,                      /* GE  */
-    LE = 272,                      /* LE  */
-    EQ = 273,                      /* EQ  */
-    NE = 274,                      /* NE  */
-    UMINUS = 275,                  /* UMINUS  */
-    NOT = 276                      /* NOT  */
+    DO = 269,                      /* DO  */
+    GE = 270,                      /* GE  */
+    LE = 271,                      /* LE  */
+    EQ = 272,                      /* EQ  */
+    NE = 273,                      /* NE  */
+    UMINUS = 274,                  /* UMINUS  */
+    NOT = 275                      /* NOT  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -92,14 +91,13 @@ extern int yydebug;
 #define AND 266
 #define OR 267
 #define FOR 268
-#define TO 269
-#define DO 270
-#define GE 271
-#define LE 272
-#define EQ 273
-#define NE 274
-#define UMINUS 275
-#define NOT 276
+#define DO 269
+#define GE 270
+#define LE 271
+#define EQ 272
+#define NE 273
+#define UMINUS 274
+#define NOT 275
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
@@ -113,7 +111,7 @@ union YYSTYPE
     char name[50];               
     nodeType *nPtr;             /* Apuntador a nodo */
 
-#line 117 "y.tab.h"
+#line 115 "y.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
