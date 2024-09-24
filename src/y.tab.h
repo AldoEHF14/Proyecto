@@ -103,7 +103,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 23 "casio_plus.y"
+#line 24 "casio_plus.y"
 
     int iValue;
     float fValue;			 /* Valor entero */

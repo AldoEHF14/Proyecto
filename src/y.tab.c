@@ -78,6 +78,7 @@
 #include "lex.yy.c"
 
 static int lbl;
+static FILE *file;
 /* prototypes */
 nodeType *opr(int oper, int nops, ...);
 nodeType *id(const char* name);
@@ -89,7 +90,7 @@ int yyerror(const char *s);
 
 std::map<std::string, int> sym;
 
-#line 93 "y.tab.c"
+#line 94 "y.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -182,7 +183,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 23 "casio_plus.y"
+#line 24 "casio_plus.y"
 
     int iValue;
     float fValue;			 /* Valor entero */
@@ -190,7 +191,7 @@ union YYSTYPE
     char name[50];               
     nodeType *nPtr;             /* Apuntador a nodo */
 
-#line 194 "y.tab.c"
+#line 195 "y.tab.c"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -641,11 +642,11 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int8 yyrline[] =
 {
-       0,    54,    54,    58,    59,    63,    64,    65,    66,    67,
-      68,    69,    70,    71,    72,    76,    77,    81,    85,    86,
-      91,    92,    96,    97,    98,    99,   100,   101,   102,   103,
-     104,   105,   106,   107,   108,   109,   110,   111,   112,   113,
-     114
+       0,    55,    55,    59,    60,    64,    65,    66,    67,    68,
+      69,    70,    71,    72,    73,    77,    78,    82,    86,    87,
+      92,    93,    97,    98,    99,   100,   101,   102,   103,   104,
+     105,   106,   107,   108,   109,   110,   111,   112,   113,   114,
+     115
 };
 #endif
 
@@ -1301,235 +1302,235 @@ yyreduce:
   switch (yyn)
     {
   case 2: /* program: function '.'  */
-#line 54 "casio_plus.y"
+#line 55 "casio_plus.y"
                            { exit(0); }
-#line 1307 "y.tab.c"
+#line 1308 "y.tab.c"
     break;
 
   case 3: /* function: function stmt  */
-#line 58 "casio_plus.y"
+#line 59 "casio_plus.y"
                            { ex((yyvsp[0].nPtr)); freeNode((yyvsp[0].nPtr)); }
-#line 1313 "y.tab.c"
+#line 1314 "y.tab.c"
     break;
 
   case 5: /* stmt: ';'  */
-#line 63 "casio_plus.y"
+#line 64 "casio_plus.y"
                                                                                 { (yyval.nPtr) = opr(';', 2, NULL, NULL); }
-#line 1319 "y.tab.c"
+#line 1320 "y.tab.c"
     break;
 
   case 6: /* stmt: expr ';'  */
-#line 64 "casio_plus.y"
+#line 65 "casio_plus.y"
                                                                                 { (yyval.nPtr) = (yyvsp[-1].nPtr); }
-#line 1325 "y.tab.c"
+#line 1326 "y.tab.c"
     break;
 
   case 7: /* stmt: PRINT expr ';'  */
-#line 65 "casio_plus.y"
+#line 66 "casio_plus.y"
                                                                                 { (yyval.nPtr) = opr(PRINT, 1, (yyvsp[-1].nPtr)); }
-#line 1331 "y.tab.c"
+#line 1332 "y.tab.c"
     break;
 
   case 8: /* stmt: VARIABLE '=' expr ';'  */
-#line 66 "casio_plus.y"
+#line 67 "casio_plus.y"
                                                                                 { (yyval.nPtr) = opr('=', 2, id((yyvsp[-3].name)), (yyvsp[-1].nPtr)); }
-#line 1337 "y.tab.c"
+#line 1338 "y.tab.c"
     break;
 
   case 9: /* stmt: WHILE '(' expr ')' stmt  */
-#line 67 "casio_plus.y"
+#line 68 "casio_plus.y"
                                                                                 { (yyval.nPtr) = opr(WHILE, 2, (yyvsp[-2].nPtr), (yyvsp[0].nPtr)); }
-#line 1343 "y.tab.c"
+#line 1344 "y.tab.c"
     break;
 
   case 10: /* stmt: IF '(' expr ')' stmt  */
-#line 68 "casio_plus.y"
+#line 69 "casio_plus.y"
                                                                                 { (yyval.nPtr) = opr(IF, 2, (yyvsp[-2].nPtr), (yyvsp[0].nPtr)); }
-#line 1349 "y.tab.c"
+#line 1350 "y.tab.c"
     break;
 
   case 11: /* stmt: IF '(' expr ')' stmt ELSE stmt  */
-#line 69 "casio_plus.y"
+#line 70 "casio_plus.y"
                                                                                 { (yyval.nPtr) = opr(IF, 3, (yyvsp[-4].nPtr), (yyvsp[-2].nPtr), (yyvsp[0].nPtr)); }
-#line 1355 "y.tab.c"
+#line 1356 "y.tab.c"
     break;
 
   case 12: /* stmt: FOR '(' expr_init ';' expr_cond ';' expr_cnt ')' stmt  */
-#line 70 "casio_plus.y"
+#line 71 "casio_plus.y"
                                                                                 { (yyval.nPtr) = opr(FOR, 4, (yyvsp[-6].nPtr), (yyvsp[-4].nPtr), (yyvsp[-2].nPtr), (yyvsp[0].nPtr)); }
-#line 1361 "y.tab.c"
+#line 1362 "y.tab.c"
     break;
 
   case 13: /* stmt: DO stmt WHILE '(' expr ')' ';'  */
-#line 71 "casio_plus.y"
+#line 72 "casio_plus.y"
                                                                                 { (yyval.nPtr) = opr(DO, 2, (yyvsp[-5].nPtr), (yyvsp[-2].nPtr)); }
-#line 1367 "y.tab.c"
+#line 1368 "y.tab.c"
     break;
 
   case 14: /* stmt: '{' stmt_list '}'  */
-#line 72 "casio_plus.y"
+#line 73 "casio_plus.y"
                                                                                 { (yyval.nPtr) = (yyvsp[-1].nPtr); }
-#line 1373 "y.tab.c"
+#line 1374 "y.tab.c"
     break;
 
   case 15: /* expr_init: VARIABLE '=' VARIABLE  */
-#line 76 "casio_plus.y"
+#line 77 "casio_plus.y"
                                         { (yyval.nPtr) = opr('=', 2, id((yyvsp[-2].name)), id((yyvsp[0].name))); }
-#line 1379 "y.tab.c"
+#line 1380 "y.tab.c"
     break;
 
   case 16: /* expr_init: VARIABLE '=' INTEGER  */
-#line 77 "casio_plus.y"
+#line 78 "casio_plus.y"
                                         { (yyval.nPtr) = opr('=', 2, id((yyvsp[-2].name)), con((yyvsp[0].iValue)));}
-#line 1385 "y.tab.c"
+#line 1386 "y.tab.c"
     break;
 
   case 17: /* expr_cond: expr  */
-#line 81 "casio_plus.y"
+#line 82 "casio_plus.y"
                                         { (yyval.nPtr) = (yyvsp[0].nPtr); }
-#line 1391 "y.tab.c"
+#line 1392 "y.tab.c"
     break;
 
   case 18: /* expr_cnt: VARIABLE '=' expr  */
-#line 85 "casio_plus.y"
+#line 86 "casio_plus.y"
                                         { (yyval.nPtr) = opr('=', 2, id((yyvsp[-2].name)), (yyvsp[0].nPtr)); }
-#line 1397 "y.tab.c"
+#line 1398 "y.tab.c"
     break;
 
   case 19: /* expr_cnt: expr  */
-#line 86 "casio_plus.y"
+#line 87 "casio_plus.y"
                                         { (yyval.nPtr) = (yyvsp[0].nPtr); }
-#line 1403 "y.tab.c"
+#line 1404 "y.tab.c"
     break;
 
   case 20: /* stmt_list: stmt  */
-#line 91 "casio_plus.y"
+#line 92 "casio_plus.y"
                                  { (yyval.nPtr) = (yyvsp[0].nPtr); }
-#line 1409 "y.tab.c"
+#line 1410 "y.tab.c"
     break;
 
   case 21: /* stmt_list: stmt_list stmt  */
-#line 92 "casio_plus.y"
+#line 93 "casio_plus.y"
                                  { (yyval.nPtr) = opr(';', 2, (yyvsp[-1].nPtr), (yyvsp[0].nPtr)); }
-#line 1415 "y.tab.c"
+#line 1416 "y.tab.c"
     break;
 
   case 22: /* expr: INTEGER  */
-#line 96 "casio_plus.y"
+#line 97 "casio_plus.y"
                                  { (yyval.nPtr) = con((yyvsp[0].iValue)); 	     }
-#line 1421 "y.tab.c"
+#line 1422 "y.tab.c"
     break;
 
   case 23: /* expr: FLOAT  */
-#line 97 "casio_plus.y"
+#line 98 "casio_plus.y"
                                  { (yyval.nPtr) = conf((yyvsp[0].fValue));  	     }
-#line 1427 "y.tab.c"
+#line 1428 "y.tab.c"
     break;
 
   case 24: /* expr: VARIABLE  */
-#line 98 "casio_plus.y"
+#line 99 "casio_plus.y"
                                  { (yyval.nPtr) = id((yyvsp[0].name)); 	     }
-#line 1433 "y.tab.c"
+#line 1434 "y.tab.c"
     break;
 
   case 25: /* expr: '-' expr  */
-#line 99 "casio_plus.y"
+#line 100 "casio_plus.y"
                                  { (yyval.nPtr) = opr(UMINUS, 1, (yyvsp[0].nPtr));  }
-#line 1439 "y.tab.c"
+#line 1440 "y.tab.c"
     break;
 
   case 26: /* expr: expr '+' expr  */
-#line 100 "casio_plus.y"
+#line 101 "casio_plus.y"
                                  { (yyval.nPtr) = opr('+', 2, (yyvsp[-2].nPtr), (yyvsp[0].nPtr)); }
-#line 1445 "y.tab.c"
+#line 1446 "y.tab.c"
     break;
 
   case 27: /* expr: expr '-' expr  */
-#line 101 "casio_plus.y"
+#line 102 "casio_plus.y"
                                  { (yyval.nPtr) = opr('-', 2, (yyvsp[-2].nPtr), (yyvsp[0].nPtr)); }
-#line 1451 "y.tab.c"
+#line 1452 "y.tab.c"
     break;
 
   case 28: /* expr: expr '*' expr  */
-#line 102 "casio_plus.y"
+#line 103 "casio_plus.y"
                                  { (yyval.nPtr) = opr('*', 2, (yyvsp[-2].nPtr), (yyvsp[0].nPtr)); }
-#line 1457 "y.tab.c"
+#line 1458 "y.tab.c"
     break;
 
   case 29: /* expr: expr '/' expr  */
-#line 103 "casio_plus.y"
+#line 104 "casio_plus.y"
                                  { (yyval.nPtr) = opr('/', 2, (yyvsp[-2].nPtr), (yyvsp[0].nPtr)); }
-#line 1463 "y.tab.c"
+#line 1464 "y.tab.c"
     break;
 
   case 30: /* expr: expr '<' expr  */
-#line 104 "casio_plus.y"
+#line 105 "casio_plus.y"
                                  { (yyval.nPtr) = opr('<', 2, (yyvsp[-2].nPtr), (yyvsp[0].nPtr)); }
-#line 1469 "y.tab.c"
+#line 1470 "y.tab.c"
     break;
 
   case 31: /* expr: expr '>' expr  */
-#line 105 "casio_plus.y"
+#line 106 "casio_plus.y"
                                  { (yyval.nPtr) = opr('>', 2, (yyvsp[-2].nPtr), (yyvsp[0].nPtr)); }
-#line 1475 "y.tab.c"
+#line 1476 "y.tab.c"
     break;
 
   case 32: /* expr: expr ':' expr  */
-#line 106 "casio_plus.y"
+#line 107 "casio_plus.y"
                                  { (yyval.nPtr) = opr(':', 2, (yyvsp[-2].nPtr), (yyvsp[0].nPtr)); }
-#line 1481 "y.tab.c"
+#line 1482 "y.tab.c"
     break;
 
   case 33: /* expr: expr GE expr  */
-#line 107 "casio_plus.y"
+#line 108 "casio_plus.y"
                                  { (yyval.nPtr) = opr(GE, 2, (yyvsp[-2].nPtr), (yyvsp[0].nPtr));  }
-#line 1487 "y.tab.c"
+#line 1488 "y.tab.c"
     break;
 
   case 34: /* expr: expr LE expr  */
-#line 108 "casio_plus.y"
+#line 109 "casio_plus.y"
                                  { (yyval.nPtr) = opr(LE, 2, (yyvsp[-2].nPtr), (yyvsp[0].nPtr));  }
-#line 1493 "y.tab.c"
+#line 1494 "y.tab.c"
     break;
 
   case 35: /* expr: expr NE expr  */
-#line 109 "casio_plus.y"
+#line 110 "casio_plus.y"
                                  { (yyval.nPtr) = opr(NE, 2, (yyvsp[-2].nPtr), (yyvsp[0].nPtr));  }
-#line 1499 "y.tab.c"
+#line 1500 "y.tab.c"
     break;
 
   case 36: /* expr: expr EQ expr  */
-#line 110 "casio_plus.y"
+#line 111 "casio_plus.y"
                                  { (yyval.nPtr) = opr(EQ, 2, (yyvsp[-2].nPtr), (yyvsp[0].nPtr));  }
-#line 1505 "y.tab.c"
+#line 1506 "y.tab.c"
     break;
 
   case 37: /* expr: expr AND expr  */
-#line 111 "casio_plus.y"
+#line 112 "casio_plus.y"
                                  { (yyval.nPtr) = opr(AND, 2, (yyvsp[-2].nPtr), (yyvsp[0].nPtr)); }
-#line 1511 "y.tab.c"
+#line 1512 "y.tab.c"
     break;
 
   case 38: /* expr: expr OR expr  */
-#line 112 "casio_plus.y"
+#line 113 "casio_plus.y"
                                  { (yyval.nPtr) = opr(OR, 2, (yyvsp[-2].nPtr), (yyvsp[0].nPtr));  }
-#line 1517 "y.tab.c"
+#line 1518 "y.tab.c"
     break;
 
   case 39: /* expr: NOT expr  */
-#line 113 "casio_plus.y"
+#line 114 "casio_plus.y"
                                  { (yyval.nPtr) = opr(NOT, 1, (yyvsp[0].nPtr));     }
-#line 1523 "y.tab.c"
+#line 1524 "y.tab.c"
     break;
 
   case 40: /* expr: '(' expr ')'  */
-#line 114 "casio_plus.y"
+#line 115 "casio_plus.y"
                                  { (yyval.nPtr) = (yyvsp[-1].nPtr); 		     }
-#line 1529 "y.tab.c"
+#line 1530 "y.tab.c"
     break;
 
 
-#line 1533 "y.tab.c"
+#line 1534 "y.tab.c"
 
       default: break;
     }
@@ -1722,7 +1723,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 117 "casio_plus.y"
+#line 118 "casio_plus.y"
 
 
 
@@ -1808,6 +1809,356 @@ void freeNode(nodeType *p) {
    free (p);
 }
 
+
+
+int ex(nodeType* p) {
+    int lbl1, lbl2;
+    static int tempCount = 0;  // Para generar temporales
+    char temp[10];  // Almacena el nombre del temporal
+
+    if (!p)
+        return 0;
+
+    switch (p->type) {
+    case typeCon:
+        //printf("\t%d\n", p->con.value);
+        //fprintf(file, "\t%d\n", p->con.value);
+        break;
+
+    case typeId:
+        //printf("\t%s\n", p->id.name);
+        //fprintf(file, "\t%s\n", p->id.name);
+        break;
+
+    case typeOpr:
+        switch (p->opr.oper) {
+        case WHILE:
+            lbl1 = lbl++;
+            lbl2 = lbl++;
+            printf("L%03d:\n", lbl1);
+            fprintf(file, "L%03d:\n", lbl1);
+
+            ex(p->opr.op[0]);  // Condición del while
+            printf("\tif_false t%d goto L%03d\n", tempCount - 1, lbl2);
+            fprintf(file, "\tif_false t%d goto L%03d\n", tempCount - 1, lbl2);
+
+            ex(p->opr.op[1]);  // Cuerpo del while
+            printf("\tgoto L%03d\n", lbl1);
+            fprintf(file, "\tgoto L%03d\n", lbl1);
+
+            printf("L%03d:\n", lbl2);
+            fprintf(file, "L%03d:\n", lbl2);
+            break;
+
+        case FOR:
+            ex(p->opr.op[0]);  // Inicialización
+            lbl1 = lbl++;      // Etiqueta de inicio del bucle
+            lbl2 = lbl++;      // Etiqueta de salida del bucle
+            printf("L%03d:\n", lbl1);
+            fprintf(file, "L%03d:\n", lbl1);
+
+            ex(p->opr.op[1]);  // Condición
+            if (p->opr.op[1]->type == typeId) {
+                printf("\tif_false %s goto L%03d\n", p->opr.op[0]->id.name, lbl2);
+                fprintf(file, "\tif_false %s goto L%03d\n", p->opr.op[0]->id.name, lbl2);
+            } else {
+                printf("\tif_false t%d goto L%03d\n", tempCount - 1, lbl2);
+                fprintf(file, "\tif_false t%d goto L%03d\n", tempCount - 1, lbl2);
+            }
+
+            ex(p->opr.op[3]);  // Cuerpo del bucle
+            ex(p->opr.op[2]);  // Incremento
+            printf("\tgoto L%03d\n", lbl1);
+            fprintf(file, "\tgoto L%03d\n", lbl1);
+
+            printf("L%03d:\n", lbl2);
+            fprintf(file, "L%03d:\n", lbl2);
+            break;
+
+        case IF:
+            ex(p->opr.op[0]);  // Condición del if
+            lbl1 = lbl++;
+            if (p->opr.nops > 2) {
+                lbl2 = lbl++;
+                printf("\tif_false t%d goto L%03d\n", tempCount - 1, lbl1);
+                fprintf(file, "\tif_false t%d goto L%03d\n", tempCount - 1, lbl1);
+
+                ex(p->opr.op[1]);  // Bloque if
+                printf("\tgoto L%03d\n", lbl2);
+                fprintf(file, "\tgoto L%03d\n", lbl2);
+
+                printf("L%03d:\n", lbl1);
+                fprintf(file, "L%03d:\n", lbl1);
+
+                ex(p->opr.op[2]);  // Bloque else
+                printf("L%03d:\n", lbl2);
+                fprintf(file, "L%03d:\n", lbl2);
+            } else {
+                printf("\tif_false t%d goto L%03d\n", tempCount - 1, lbl1);
+                fprintf(file, "\tif_false t%d goto L%03d\n", tempCount - 1, lbl1);
+
+                ex(p->opr.op[1]);  // Bloque if
+                printf("L%03d:\n", lbl1);
+                fprintf(file, "L%03d:\n", lbl1);
+            }
+            break;
+
+        case '=':
+            ex(p->opr.op[1]);  // Evaluar el valor de la derecha
+            if (p->opr.op[1]->type == typeOpr) {
+                printf("\t%s = t%d\n", p->opr.op[0]->id.name, tempCount - 1);
+                fprintf(file, "\t%s = t%d\n", p->opr.op[0]->id.name, tempCount - 1);
+            } else if (p->opr.op[1]->type == typeCon) {
+                printf("\t%s = %d\n", p->opr.op[0]->id.name, p->opr.op[1]->con.value);
+                fprintf(file, "\t%s = %d\n", p->opr.op[0]->id.name, p->opr.op[1]->con.value);
+            } else if (p->opr.op[1]->type == typeId) {
+                printf("\t%s = %s\n", p->opr.op[0]->id.name, p->opr.op[1]->id.name);
+                fprintf(file, "\t%s = %s\n", p->opr.op[0]->id.name, p->opr.op[1]->id.name);
+            }
+            break;
+
+        case '+':
+            ex(p->opr.op[0]);
+            ex(p->opr.op[1]);
+            sprintf(temp, "t%d", tempCount++);
+            if (p->opr.op[0]->type == typeId) {
+                printf("\t%s = %s + %d\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->con.value);
+                fprintf(file, "\t%s = %s + %d\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->con.value);
+            } else {
+                printf("\t%s = %d + %d\n", temp, p->opr.op[0]->con.value, p->opr.op[1]->con.value);
+                fprintf(file, "\t%s = %d + %d\n", temp, p->opr.op[0]->con.value, p->opr.op[1]->con.value);
+            }
+            break;
+
+        case PRINT:
+            ex(p->opr.op[0]);
+            if (p->opr.op[0]->type == typeId) {
+                printf("\tprint %s\n", p->opr.op[0]->id.name);
+                fprintf(file, "\tprint %s\n", p->opr.op[0]->id.name);
+            } else if (p->opr.op[0]->type == typeCon) {
+                printf("\tprint %d\n", p->opr.op[0]->con.value);
+                fprintf(file, "\tprint %d\n", p->opr.op[0]->con.value);
+            } else if (p->opr.op[0]->type == typeOpr) {
+                printf("\tprint t%d\n", tempCount - 1);
+                fprintf(file, "\tprint t%d\n", tempCount - 1);
+            }
+            break;
+
+        case UMINUS:
+            ex(p->opr.op[0]);
+            printf("\t-%d\n", p->opr.op[0]->con.value);
+            fprintf(file, "\t-%d\n", p->opr.op[0]->con.value);
+            break;
+
+        default:
+            ex(p->opr.op[0]);  // Lado izquierdo
+            ex(p->opr.op[1]);  // Lado derecho
+            sprintf(temp, "t%d", tempCount++);
+            switch (p->opr.oper) {
+            case '-':
+                if (p->opr.op[0]->type == typeId && p->opr.op[1]->type == typeId) {
+                    printf("\t%s = %s - %s\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->id.name);
+                    fprintf(file, "\t%s = %s - %s\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->id.name);
+                } else if (p->opr.op[0]->type == typeCon && p->opr.op[1]->type == typeCon) {
+                    printf("\t%s = %d - %d\n", temp, p->opr.op[0]->con.value, p->opr.op[1]->con.value);
+                    fprintf(file, "\t%s = %d - %d\n", temp, p->opr.op[0]->con.value, p->opr.op[1]->con.value);
+                }
+                break;
+
+            case '*':
+                if (p->opr.op[0]->type == typeId && p->opr.op[1]->type == typeId) {
+                    printf("\t%s = %s * %s\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->id.name);
+                    fprintf(file, "\t%s = %s * %s\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->id.name);
+                } else if (p->opr.op[0]->type == typeCon && p->opr.op[1]->type == typeCon) {
+                    printf("\t%s = %d * %d\n", temp, p->opr.op[0]->con.value, p->opr.op[1]->con.value);
+                    fprintf(file, "\t%s = %d * %d\n", temp, p->opr.op[0]->con.value, p->opr.op[1]->con.value);
+                }
+                break;
+
+            case '/':
+                if (p->opr.op[0]->type == typeId && p->opr.op[1]->type == typeId) {
+                    printf("\t%s = %s / %s\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->id.name);
+                    fprintf(file, "\t%s = %s / %s\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->id.name);
+                } else if (p->opr.op[0]->type == typeCon && p->opr.op[1]->type == typeCon) {
+                    printf("\t%s = %d / %d\n", temp, p->opr.op[0]->con.value, p->opr.op[1]->con.value);
+                    fprintf(file, "\t%s = %d / %d\n", temp, p->opr.op[0]->con.value, p->opr.op[1]->con.value);
+                }
+                break;
+
+
+	     case '<':
+                if (p->opr.op[0]->type == typeId && p->opr.op[1]->type == typeId) {
+                    // Ambos operandos son variables
+                    printf("\t%s = %s < %s\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->id.name);
+                    fprintf(file, "\t%s = %s < %s\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->id.name);
+                } else if (p->opr.op[0]->type == typeCon && p->opr.op[1]->type == typeCon) {
+                    // Ambos operandos son constantes
+                    printf("\t%s = %d < %d\n", temp, p->opr.op[0]->con.value, p->opr.op[1]->con.value);
+                    fprintf(file, "\t%s = %d < %d\n", temp, p->opr.op[0]->con.value, p->opr.op[1]->con.value);
+                } else if (p->opr.op[0]->type == typeId && p->opr.op[1]->type == typeCon) {
+                    // El primer operando es una variable y el segundo es una constante
+                    printf("\t%s = %s < %d\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->con.value);
+                    fprintf(file, "\t%s = %s < %d\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->con.value);
+                } else if (p->opr.op[0]->type == typeCon && p->opr.op[1]->type == typeId) {
+                    // El primer operando es una constante y el segundo es una variable
+                    printf("\t%s = %d < %s\n", temp, p->opr.op[0]->con.value, p->opr.op[1]->id.name);
+                    fprintf(file, "\t%s = %d < %s\n", temp, p->opr.op[0]->con.value, p->opr.op[1]->id.name);
+                }
+                break;
+
+            case '>':
+                if (p->opr.op[0]->type == typeId && p->opr.op[1]->type == typeId) {
+                    // Ambos operandos son variables
+                    printf("\t%s = %s > %s\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->id.name);
+                    fprintf(file, "\t%s = %s > %s\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->id.name);
+                } else if (p->opr.op[0]->type == typeCon && p->opr.op[1]->type == typeCon) {
+                    // Ambos operandos son constantes
+                    printf("\t%s = %d > %d\n", temp, p->opr.op[0]->con.value, p->opr.op[1]->con.value);
+                    fprintf(file, "\t%s = %d > %d\n", temp, p->opr.op[0]->con.value, p->opr.op[1]->con.value);
+                } else if (p->opr.op[0]->type == typeId && p->opr.op[1]->type == typeCon) {
+                    // El primer operando es una variable y el segundo es una constante
+                    printf("\t%s = %s > %d\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->con.value);
+                    fprintf(file, "\t%s = %s > %d\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->con.value);
+                } else if (p->opr.op[0]->type == typeCon && p->opr.op[1]->type == typeId) {
+                    // El primer operando es una constante y el segundo es una variable
+                    printf("\t%s = %d > %s\n", temp, p->opr.op[0]->con.value, p->opr.op[1]->id.name);
+                    fprintf(file, "\t%s = %d > %s\n", temp, p->opr.op[0]->con.value, p->opr.op[1]->id.name);
+                }
+                break;
+
+            case GE:
+                if (p->opr.op[0]->type == typeId && p->opr.op[1]->type == typeId) {
+                    // Ambos operandos son variables
+                    printf("\t%s = %s >= %s\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->id.name);
+                    fprintf(file, "\t%s = %s >= %s\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->id.name);
+                } else if (p->opr.op[0]->type == typeCon && p->opr.op[1]->type == typeCon) {
+                    // Ambos operandos son constantes
+                    printf("\t%s = %d >= %d\n", temp, p->opr.op[0]->con.value, p->opr.op[1]->con.value);
+                    fprintf(file, "\t%s = %d >= %d\n", temp, p->opr.op[0]->con.value, p->opr.op[1]->con.value);
+                } else if (p->opr.op[0]->type == typeId && p->opr.op[1]->type == typeCon) {
+                    // El primer operando es una variable y el segundo es una constante
+                    printf("\t%s = %s >= %d\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->con.value);
+                    fprintf(file, "\t%s = %s >= %d\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->con.value);
+                } else if (p->opr.op[0]->type == typeCon && p->opr.op[1]->type == typeId) {
+                    // El primer operando es una constante y el segundo es una variable
+                    printf("\t%s = %d >= %s\n", temp, p->opr.op[0]->con.value, p->opr.op[1]->id.name);
+                    fprintf(file, "\t%s = %d >= %s\n", temp, p->opr.op[0]->con.value, p->opr.op[1]->id.name);
+                }
+                break;
+
+            case LE:
+                if (p->opr.op[0]->type == typeId && p->opr.op[1]->type == typeId) {
+                    // Ambos operandos son variables
+                    printf("\t%s = %s <= %s\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->id.name);
+                    fprintf(file, "\t%s = %s <= %s\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->id.name);
+                } else if (p->opr.op[0]->type == typeCon && p->opr.op[1]->type == typeCon) {
+                    // Ambos operandos son constantes
+                    printf("\t%s = %d <= %d\n", temp, p->opr.op[0]->con.value, p->opr.op[1]->con.value);
+                    fprintf(file, "\t%s = %d <= %d\n", temp, p->opr.op[0]->con.value, p->opr.op[1]->con.value);
+                } else if (p->opr.op[0]->type == typeId && p->opr.op[1]->type == typeCon) {
+                    // El primer operando es una variable y el segundo es una constante
+                    printf("\t%s = %s <= %d\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->con.value);
+                    fprintf(file, "\t%s = %s <= %d\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->con.value);
+                } else if (p->opr.op[0]->type == typeCon && p->opr.op[1]->type == typeId) {
+                    // El primer operando es una constante y el segundo es una variable
+                    printf("\t%s = %d <= %s\n", temp, p->opr.op[0]->con.value, p->opr.op[1]->id.name);
+                    fprintf(file, "\t%s = %d <= %s\n", temp, p->opr.op[0]->con.value, p->opr.op[1]->id.name);
+                }
+                break;
+
+            case NE:
+                if (p->opr.op[0]->type == typeId && p->opr.op[1]->type == typeId) {
+                    // Ambos operandos son variables
+                    printf("\t%s = %s != %s\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->id.name);
+                    fprintf(file, "\t%s = %s != %s\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->id.name);
+                } else if (p->opr.op[0]->type == typeCon && p->opr.op[1]->type == typeCon) {
+                    // Ambos operandos son constantes
+                    printf("\t%s = %d != %d\n", temp, p->opr.op[0]->con.value, p->opr.op[1]->con.value);
+                    fprintf(file, "\t%s = %d != %d\n", temp, p->opr.op[0]->con.value, p->opr.op[1]->con.value);
+                } else if (p->opr.op[0]->type == typeId && p->opr.op[1]->type == typeCon) {
+                    // El primer operando es una variable y el segundo es una constante
+                    printf("\t%s = %s != %d\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->con.value);
+                    fprintf(file, "\t%s = %s != %d\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->con.value);
+                } else if (p->opr.op[0]->type == typeCon && p->opr.op[1]->type == typeId) {
+                    // El primer operando es una constante y el segundo es una variable
+                    printf("\t%s = %d != %s\n", temp, p->opr.op[0]->con.value, p->opr.op[1]->id.name);
+                    fprintf(file, "\t%s = %d != %s\n", temp, p->opr.op[0]->con.value, p->opr.op[1]->id.name);
+                }
+                break;	
+	    
+
+	    case EQ:
+    if (p->opr.op[0]->type == typeId && p->opr.op[1]->type == typeId) {
+        // Ambos operandos son variables
+        printf("\t%s = %s = %s\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->id.name);
+        fprintf(file, "\t%s = %s = %s\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->id.name);
+    } else if (p->opr.op[0]->type == typeCon && p->opr.op[1]->type == typeCon) {
+        // Ambos operandos son constantes
+        printf("\t%s = %d = %d\n", temp, p->opr.op[0]->con.value, p->opr.op[1]->con.value);
+        fprintf(file, "\t%s = %d = %d\n", temp, p->opr.op[0]->con.value, p->opr.op[1]->con.value);
+    } else if (p->opr.op[0]->type == typeId && p->opr.op[1]->type == typeCon) {
+        // El primer operando es una variable y el segundo es una constante
+        printf("\t%s = %s = %d\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->con.value);
+        fprintf(file, "\t%s = %s = %d\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->con.value);
+    } else if (p->opr.op[0]->type == typeCon && p->opr.op[1]->type == typeId) {
+        // El primer operando es una constante y el segundo es una variable
+        printf("\t%s = %d = %s\n", temp, p->opr.op[0]->con.value, p->opr.op[1]->id.name);
+        fprintf(file, "\t%s = %d = %s\n", temp, p->opr.op[0]->con.value, p->opr.op[1]->id.name);
+    }
+    break;
+
+case AND:
+    if (p->opr.op[0]->type == typeId && p->opr.op[1]->type == typeId) {
+        // Ambos operandos son variables
+        printf("\t%s = %s && %s\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->id.name);
+        fprintf(file, "\t%s = %s && %s\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->id.name);
+    } else if (p->opr.op[0]->type == typeCon && p->opr.op[1]->type == typeCon) {
+        // Ambos operandos son constantes
+        printf("\t%s = %d && %d\n", temp, p->opr.op[0]->con.value, p->opr.op[1]->con.value);
+        fprintf(file, "\t%s = %d && %d\n", temp, p->opr.op[0]->con.value, p->opr.op[1]->con.value);
+    } else if (p->opr.op[0]->type == typeId && p->opr.op[1]->type == typeCon) {
+        // El primer operando es una variable y el segundo es una constante
+        printf("\t%s = %s && %d\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->con.value);
+        fprintf(file, "\t%s = %s && %d\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->con.value);
+    } else if (p->opr.op[0]->type == typeCon && p->opr.op[1]->type == typeId) {
+        // El primer operando es una constante y el segundo es una variable
+        printf("\t%s = %d && %s\n", temp, p->opr.op[0]->con.value, p->opr.op[1]->id.name);
+        fprintf(file, "\t%s = %d && %s\n", temp, p->opr.op[0]->con.value, p->opr.op[1]->id.name);
+    }
+    break;
+
+case OR:
+    if (p->opr.op[0]->type == typeId && p->opr.op[1]->type == typeId) {
+        // Ambos operandos son variables
+        printf("\t%s = %s || %s\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->id.name);
+        fprintf(file, "\t%s = %s || %s\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->id.name);
+    } else if (p->opr.op[0]->type == typeCon && p->opr.op[1]->type == typeCon) {
+        // Ambos operandos son constantes
+        printf("\t%s = %d || %d\n", temp, p->opr.op[0]->con.value, p->opr.op[1]->con.value);
+        fprintf(file, "\t%s = %d || %d\n", temp, p->opr.op[0]->con.value, p->opr.op[1]->con.value);
+    } else if (p->opr.op[0]->type == typeId && p->opr.op[1]->type == typeCon) {
+        // El primer operando es una variable y el segundo es una constante
+        printf("\t%s = %s || %d\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->con.value);
+        fprintf(file, "\t%s = %s || %d\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->con.value);
+    } else if (p->opr.op[0]->type == typeCon && p->opr.op[1]->type == typeId) {
+        // El primer operando es una constante y el segundo es una variable
+        printf("\t%s = %d || %s\n", temp, p->opr.op[0]->con.value, p->opr.op[1]->id.name);
+        fprintf(file, "\t%s = %d || %s\n", temp, p->opr.op[0]->con.value, p->opr.op[1]->id.name);
+    }
+    break;
+
+
+            }
+        }
+    }
+    return 0;
+}
+
+
+
+
+
+/*
 int ex(nodeType* p) {
     int lbl1, lbl2;
     static int tempCount = 0;  // Para generar temporales
@@ -1832,13 +2183,25 @@ int ex(nodeType* p) {
         switch (p->opr.oper) {
         case WHILE:
             lbl1 = lbl++;
-            lbl2 = lbl++;
-            printf("L%03d:\n", lbl1);
+
+	    lbl2 = lbl++;
+            
+	    printf("L%03d:\n", lbl1);
+ 
+            fprintf(file, "L%03d:\n", lbl1);  // Escribe en el archivo	
+
             ex(p->opr.op[0]);  // Condición del while
             printf("\tif_false t%d goto L%03d\n", tempCount - 1,lbl2);
-            ex(p->opr.op[1]);  // Cuerpo del while
+            
+	    fprintf(file, "\tif_false t%d goto L%03d\n", tempCount - 1, lbl2);
+
+	    ex(p->opr.op[1]);  // Cuerpo del while
             printf("\tgoto L%03d\n", lbl1);
+
+		fprintf(file, "\tgoto L%03d\n", lbl1);
             printf("L%03d:\n", lbl2);
+
+		fprintf(file, "L%03d:\n", lbl2);
             break;
 
         case FOR:
@@ -1846,22 +2209,31 @@ int ex(nodeType* p) {
             lbl1 = lbl++;      // Etiqueta de inicio del bucle
             lbl2 = lbl++;      // Etiqueta de salida del bucle
             printf("L%03d:\n", lbl1);
-
-            ex(p->opr.op[1]);  // Condición (i < 10)
+		fprintf(file, "L%03d:\n", lbl1);            
+		ex(p->opr.op[1]);  // Condición (i < 10)
             if (p->opr.op[1]->type == typeId) {
         // Si la condición involucra una variable, usar el nombre de la variable
                  //printf("\tif_false %s goto L%03d\n", p->opr.op[0]->id.name, lbl2);
                  printf("\tif_false %s goto L%03d\n", p->opr.op[0]->id.name, lbl2);
+
+		fprintf(file, "\tif_false %s goto L%03d\n", p->opr.op[0]->id.name, lbl2);
             	  
 	    } else {
             // Si es una operación con temporales
                  printf("\tif_false t%d goto L%03d\n", tempCount - 1, lbl2);
+
+		fprintf(file, "\tif_false t%d goto L%03d\n", tempCount - 1, lbl2);
+		
              }
             //printf("\tif_false t%d goto L%03d\n",  tempCount - 1,lbl2);
             ex(p->opr.op[3]);  // Cuerpo del bucle (a = a + i)
             ex(p->opr.op[2]);  // Incremento (i = i + 1)
             printf("\tgoto L%03d\n", lbl1);
+
+		fprintf(file, "\tgoto L%03d\n", lbl1);
             printf("L%03d:\n", lbl2);  // Salida del bucle
+
+		fprintf(file, "L%03d:\n", lbl2);
             break;
 
         case IF:
@@ -1870,11 +2242,25 @@ int ex(nodeType* p) {
             if (p->opr.nops > 2) {
                 lbl2 = lbl++;
                 printf("\tif_false t%d goto L%03d\n", tempCount - 1, lbl1);
+
+		fprintf(file, "\tif_false t%d goto L%03d\n", tempCount - 1, lbl1);
+
+
                 ex(p->opr.op[1]);  // Bloque if
                 printf("\tgoto L%03d\n", lbl2);
+
+		fprintf(file, "\tgoto L%03d\n", lbl2);	
+
+
+
                 printf("L%03d:\n", lbl1);
+
+		fprintf(file, "L%03d:\n", lbl1);
+
                 ex(p->opr.op[2]);  // Bloque else
                 printf("L%03d:\n", lbl2);
+
+		fprintf(file, "L%03d:\n", lbl2);
             } else {
                 printf("\tif_false t%d goto L%03d\n", tempCount - 1, lbl1);
                 ex(p->opr.op[1]);  // Bloque if
@@ -2099,11 +2485,15 @@ int ex(nodeType* p) {
         }
     }
     return 0;
-}
+}*/
 
 int main(int argc, char **argv) {
    extern FILE* yyin;
-
+   file = fopen("tac_file.txt", "w");
+   if (file == NULL) {
+   	printf("Error al abrir el archivo\n");
+	return 1;
+   }	
    yyin = fopen(argv[1], "r");
    yyparse();
 

@@ -1,20 +1,10 @@
 mivariable = 12;
 
-real = 12.34;
-
-print 12.34;
-
 result = mivariable : 2;
 
 for (k=1; k<=5; k=k+1) {
     print 2*k;
 }
-
-i = 0;
-do {
-   print i*3;
-   i = i + 1;
-} while(i <= 5);
 
 if (i < 10) {
 	print i;
