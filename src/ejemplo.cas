@@ -1,21 +1,22 @@
-mivariable = 12;
+int main(){
+	mivariable = 12;
 
-result = mivariable;
+	result = mivariable;
 
-for (k=1; k<=5; k=k+1) {
-    print 2*k;
+	for (k=1; k<=5; k=k+1) {
+	    print 2*k;
+	}
+
+	i = 0;
+	while (i < 5) {
+	    print 2*i; 
+	}
+
+	if (i < 10) {
+		print i;
+	} 
+
+
+	return 0;
 }
-
-i = 0;
-while (i < 5) {
-    print 2*i; 
-}
-
-if (i < 10) {
-	print i;
-} 
-
-
-
-.
 
