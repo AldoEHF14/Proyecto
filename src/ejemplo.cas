@@ -1,9 +1,14 @@
 mivariable = 12;
 
-result = mivariable : 2;
+result = mivariable;
 
 for (k=1; k<=5; k=k+1) {
     print 2*k;
+}
+
+i = 0;
+while (i < 5) {
+    print 2*i; 
 }
 
 if (i < 10) {
@@ -13,3 +18,4 @@ if (i < 10) {
 
 
 .
+

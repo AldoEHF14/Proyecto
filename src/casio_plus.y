@@ -209,19 +209,28 @@ void freeNode(nodeType *p) {
 
 int ex(nodeType* p) {
     int lbl1, lbl2;
-    static int tempCount = 0;  // Para generar temporales
+    static int tempCount = 0;  // Para generar temporales 
+    static int regCount = 0;
     char temp[10];  // Almacena el nombre del temporal
     if (!p)
         return 0;
 
     switch (p->type) {
     case typeCon:
+	
+	
+	//printf("\tMOV R%d, #%d\n", regCount++, p->con.value);
+	//printf("\tMOV R%d, #%d\n", tempCount++, p->con.value);
+
         // Para constantes, imprimir el valor directamente
         //printf("\t%d\n", p->con.value);
         //printf("entro aqui");
         break;
 
     case typeId:
+	
+	//printf("\tMOV R%d, [R%d]\n", regCount++, tempCount);
+	//printf("\tMOV R%d, [%s]\n", tempCount++, p->id.name);
         // Para variables, imprimir el nombre directamente
         //printf("\t%s\n", p->id.name);
         //printf("aquiiiiiii");
@@ -234,12 +243,16 @@ int ex(nodeType* p) {
 
 	    lbl2 = lbl++;
             
+	    
 	    printf("L%03d:\n", lbl1);
- 
+	     
             //fprintf(file, "L%03d:\n", lbl1);  // Escribe en el archivo	
 
             ex(p->opr.op[0]);  // Condición del while
-            printf("\tif_false t%d goto L%03d\n", tempCount - 1,lbl2);
+            
+	   // printf("\tCMP R%d, #0\n", regCount - 1);  // Comparar la condición con 0		
+
+	    printf("\tif_false t%d goto L%03d\n", tempCount - 1,lbl2);
             
 	    //fprintf(file, "\tif_false t%d goto L%03d\n", tempCount - 1, lbl2);
 
