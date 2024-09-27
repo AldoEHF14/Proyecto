@@ -32,9 +32,9 @@ std::map<std::string, int> sym;
 %token <iValue> INTEGER
 %token <fValue> FLOAT
 %token <name> VARIABLE
-%token WHILE IF PRINT
+%token WHILE IF PRINT INT MAIN R
 %nonassoc IFX
-%nonassoc ELSE
+%nonassoc ELSE RETURN
 %token AND
 %token OR
 %token FOR
@@ -50,12 +50,18 @@ std::map<std::string, int> sym;
 %type <nPtr> stmt expr stmt_list expr_init expr_cond expr_cnt
 
 %%
+	
 
 program:
-         function '.'      { exit(0); }
+          main_function  { exit(0); }
          ;
 
+main_function:
+    INT MAIN '(' ')' '{' function  R INTEGER ';' '}'
+    ;
+
 function:
+         
          function stmt     { ex($2); freeNode($2); }
          | /* NULL */
          ;
@@ -71,6 +77,8 @@ stmt:
          | FOR '(' expr_init  ';' expr_cond ';' expr_cnt ')' stmt 		{ $$ = opr(FOR, 4, $3, $5, $7, $9); }
 	 | DO stmt WHILE '(' expr ')' ';'                   			{ $$ = opr(DO, 2, $2, $5); }
          | '{' stmt_list '}'                   					{ $$ = $2; }
+         //| INT MAIN '('')''{' stmt_list '}'                   					{ $$ = $6; }
+         
          ;
 
 expr_init:

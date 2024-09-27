@@ -32,6 +32,9 @@ sign 	[-+]?
 "print"     return PRINT;
 "for"       return FOR;
 "do"        return DO;
+"int"	    return INT;
+"main"	    return MAIN;
+"return"	return R;
 
 
 
