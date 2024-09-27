@@ -53,9 +53,9 @@ void translate_three_addr(char* line) {
     // Inicializar las cadenas
     var[0] = op[0] = arg1[0] = arg2[0] = label[0] = '\0';
         // Verificar si la línea es un label
-    // if (sscanf(line, "%[^:]:", label) == 1) {
-    //     printf("%s:\n", label);  // Imprimir el label
-    // }
+	//if (sscanf(line, "%[^:]:", label) == 1) {
+	//	printf("%s:\n", label);  // Imprimir el label
+    	//}
     // Verificar si es una asignación (var = expresión)
     if (sscanf(line, "%s = %s %s %s", var, arg1, op, arg2) == 4) {
         // Es una operación aritmética o lógica
