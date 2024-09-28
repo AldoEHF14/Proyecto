@@ -217,28 +217,19 @@ void freeNode(nodeType *p) {
 
 int ex(nodeType* p) {
     int lbl1, lbl2;
-    static int tempCount = 0;  // Para generar temporales 
-    static int regCount = 0;
+    static int tempCount = 0;  // Para generar temporales
     char temp[10];  // Almacena el nombre del temporal
     if (!p)
         return 0;
 
     switch (p->type) {
     case typeCon:
-	
-	
-	//printf("\tMOV R%d, #%d\n", regCount++, p->con.value);
-	//printf("\tMOV R%d, #%d\n", tempCount++, p->con.value);
-
         // Para constantes, imprimir el valor directamente
         //printf("\t%d\n", p->con.value);
         //printf("entro aqui");
         break;
 
     case typeId:
-	
-	//printf("\tMOV R%d, [R%d]\n", regCount++, tempCount);
-	//printf("\tMOV R%d, [%s]\n", tempCount++, p->id.name);
         // Para variables, imprimir el nombre directamente
         //printf("\t%s\n", p->id.name);
         //printf("aquiiiiiii");
@@ -248,61 +239,49 @@ int ex(nodeType* p) {
         switch (p->opr.oper) {
         case WHILE:
             lbl1 = lbl++;
-
-	    lbl2 = lbl++;
-            
-	    
-	    printf("L%03d:\n", lbl1);
-	     
-            //fprintf(file, "L%03d:\n", lbl1);  // Escribe en el archivo	
-
+            lbl2 = lbl++;
+            printf("L%03d:\n", lbl1);
             ex(p->opr.op[0]);  // Condición del while
-            
-	   // printf("\tCMP R%d, #0\n", regCount - 1);  // Comparar la condición con 0		
-
-	    printf("\tif_false t%d goto L%03d\n", tempCount - 1,lbl2);
-            
-	    //fprintf(file, "\tif_false t%d goto L%03d\n", tempCount - 1, lbl2);
-
-	    ex(p->opr.op[1]);  // Cuerpo del while
+            printf("\tif_false t%d goto L%03d\n", tempCount - 1,lbl2);
+	        ex(p->opr.op[1]);  // Cuerpo del while
             printf("\tgoto L%03d\n", lbl1);
-
-		//fprintf(file, "\tgoto L%03d\n", lbl1);
             printf("L%03d:\n", lbl2);
 
-		//fprintf(file, "L%03d:\n", lbl2);
             break;
+
+        case DO:
+            lbl1 = lbl++;
+            lbl2 = lbl++;
+
+            printf("L%03d:\n", lbl1);  // Etiqueta de inicio del cuerpo del bucle
+
+            ex(p->opr.op[0]);  // Cuerpo del bucle DO
+
+            // Evaluar condición
+            ex(p->opr.op[1]);  
+            printf("\tif_false t%d goto L%03d\n", tempCount - 1, lbl2);  // Saltar a la etiqueta de salida si la condición es falsa
+            printf("\tgoto L%03d\n", lbl1);  // Saltar de nuevo al inicio del bucle
+            printf("L%03d:\n", lbl2);  // Etiqueta de salida
+            break;
+
 
         case FOR:
             ex(p->opr.op[0]);  // Inicialización (i = 0)
             lbl1 = lbl++;      // Etiqueta de inicio del bucle
             lbl2 = lbl++;      // Etiqueta de salida del bucle
-            printf("L%03d:\n", lbl1);
-		//fprintf(file, "L%03d:\n", lbl1);            
-		ex(p->opr.op[1]);  // Condición (i < 10)
+            printf("L%03d:\n", lbl1);          
+		    ex(p->opr.op[1]);  // Condición (i < 10)
             if (p->opr.op[1]->type == typeId) {
-        // Si la condición involucra una variable, usar el nombre de la variable
-                 //printf("\tif_false %s goto L%03d\n", p->opr.op[0]->id.name, lbl2);
-                 printf("\tif_false %s goto L%03d\n", p->opr.op[0]->id.name, lbl2);
-
-		//fprintf(file, "\tif_false %s goto L%03d\n", p->opr.op[0]->id.name, lbl2);
-            	  
-	    } else {
+                 printf("\tif_false %s goto L%03d\n", p->opr.op[0]->id.name, lbl2);	  
+	        } else {
             // Si es una operación con temporales
                  printf("\tif_false t%d goto L%03d\n", tempCount - 1, lbl2);
-
-		//fprintf(file, "\tif_false t%d goto L%03d\n", tempCount - 1, lbl2);
-		
              }
             //printf("\tif_false t%d goto L%03d\n",  tempCount - 1,lbl2);
             ex(p->opr.op[3]);  // Cuerpo del bucle (a = a + i)
             ex(p->opr.op[2]);  // Incremento (i = i + 1)
             printf("\tgoto L%03d\n", lbl1);
-
-		//fprintf(file, "\tgoto L%03d\n", lbl1);
             printf("L%03d:\n", lbl2);  // Salida del bucle
-
-		//fprintf(file, "L%03d:\n", lbl2);
             break;
 
         case IF:
@@ -311,25 +290,11 @@ int ex(nodeType* p) {
             if (p->opr.nops > 2) {
                 lbl2 = lbl++;
                 printf("\tif_false t%d goto L%03d\n", tempCount - 1, lbl1);
-
-		//fprintf(file, "\tif_false t%d goto L%03d\n", tempCount - 1, lbl1);
-
-
                 ex(p->opr.op[1]);  // Bloque if
                 printf("\tgoto L%03d\n", lbl2);
-
-		//fprintf(file, "\tgoto L%03d\n", lbl2);	
-
-
-
                 printf("L%03d:\n", lbl1);
-
-		//fprintf(file, "L%03d:\n", lbl1);
-
                 ex(p->opr.op[2]);  // Bloque else
                 printf("L%03d:\n", lbl2);
-
-		//fprintf(file, "L%03d:\n", lbl2);
             } else {
                 printf("\tif_false t%d goto L%03d\n", tempCount - 1, lbl1);
                 ex(p->opr.op[1]);  // Bloque if
@@ -381,9 +346,10 @@ int ex(nodeType* p) {
         default:
             ex(p->opr.op[0]);  // Lado izquierdo
             ex(p->opr.op[1]);  // Lado derecho
-            sprintf(temp, "t%d", tempCount++);
+            //sprintf(temp, "t%d", tempCount++);
             switch (p->opr.oper) {
             case '-':
+                sprintf(temp, "t%d", tempCount++);
                 if (p->opr.op[0]->type == typeId && p->opr.op[1]->type == typeId) {
                     // Ambos operandos son variables>
                     printf("\t%s = %s - %s\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->id.name);
@@ -399,6 +365,7 @@ int ex(nodeType* p) {
                  } 
                 break;
             case '*':
+                sprintf(temp, "t%d", tempCount++);
                 if (p->opr.op[0]->type == typeId && p->opr.op[1]->type == typeId) {
                     // Ambos operandos son variables>
                     printf("\t%s = %s * %s\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->id.name);
@@ -414,6 +381,7 @@ int ex(nodeType* p) {
                  } 
                 break;
             case '/':
+                sprintf(temp, "t%d", tempCount++);
                 if (p->opr.op[0]->type == typeId && p->opr.op[1]->type == typeId) {
                     // Ambos operandos son variables>
                     printf("\t%s = %s / %s\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->id.name);
@@ -428,7 +396,24 @@ int ex(nodeType* p) {
                     printf("\t%s = %d / %s\n", temp, p->opr.op[0]->con.value, p->opr.op[1]->id.name);
                  } 
                 break;
+            case ':':
+                sprintf(temp, "t%d", tempCount++);
+                if (p->opr.op[0]->type == typeId && p->opr.op[1]->type == typeId) {
+                    // Ambos operandos son variables>
+                    printf("\t%s = %s : %s\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->id.name);
+                } else if (p->opr.op[0]->type == typeCon && p->opr.op[1]->type == typeCon) {
+                    // Ambos operandos son constantes
+                    printf("\t%s = %d : %d\n", temp, p->opr.op[0]->con.value, p->opr.op[1]->con.value);
+                } else if (p->opr.op[0]->type == typeId && p->opr.op[1]->type == typeCon) {
+                    // El primer operando es una variable y el segundo es una constante
+                    printf("\t%s = %s : %d\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->con.value);
+                } else if (p->opr.op[0]->type == typeCon && p->opr.op[1]->type == typeId) {
+                    // El primer operando es una constante y el segundo es una variable
+                    printf("\t%s = %d : %s\n", temp, p->opr.op[0]->con.value, p->opr.op[1]->id.name);
+                 } 
+                break;
             case '<':
+                sprintf(temp, "t%d", tempCount++);
                 if (p->opr.op[0]->type == typeId && p->opr.op[1]->type == typeId) {
                     // Ambos operandos son variables>
                     printf("\t%s = %s < %s\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->id.name);
@@ -445,6 +430,7 @@ int ex(nodeType* p) {
                 break;
 
             case '>':
+                sprintf(temp, "t%d", tempCount++);
                 if (p->opr.op[0]->type == typeId && p->opr.op[1]->type == typeId) {
                     // Ambos operandos son variables>
                     printf("\t%s = %s > %s\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->id.name);
@@ -461,6 +447,7 @@ int ex(nodeType* p) {
                 break;
 
             case GE:
+                sprintf(temp, "t%d", tempCount++);
                 if (p->opr.op[0]->type == typeId && p->opr.op[1]->type == typeId) {
                     // Ambos operandos son variables>
                     printf("\t%s = %s >= %s\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->id.name);
@@ -476,6 +463,7 @@ int ex(nodeType* p) {
                  } 
                 break;
             case LE:
+                sprintf(temp, "t%d", tempCount++);
                 if (p->opr.op[0]->type == typeId && p->opr.op[1]->type == typeId) {
                     // Ambos operandos son variables>
                     printf("\t%s = %s <= %s\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->id.name);
@@ -491,6 +479,7 @@ int ex(nodeType* p) {
                  }            
                 break;
             case NE:
+                sprintf(temp, "t%d", tempCount++);
                 if (p->opr.op[0]->type == typeId && p->opr.op[1]->type == typeId) {
                     // Ambos operandos son variables<
                     printf("\t%s = %s != %s\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->id.name);
@@ -506,6 +495,7 @@ int ex(nodeType* p) {
                  }
                 break;
             case EQ:
+                sprintf(temp, "t%d", tempCount++);
                 if (p->opr.op[0]->type == typeId && p->opr.op[1]->type == typeId) {
                     // Ambos operandos son variables
                     printf("\t%s = %s = %s\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->id.name);
@@ -521,6 +511,7 @@ int ex(nodeType* p) {
                  }
                 break;
             case AND:
+                sprintf(temp, "t%d", tempCount++);
                 if (p->opr.op[0]->type == typeId && p->opr.op[1]->type == typeId) {
                     // Ambos operandos son variables
                     printf("\t%s = %s && %s\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->id.name);
@@ -536,6 +527,7 @@ int ex(nodeType* p) {
                  }
                 break;
             case OR:
+                sprintf(temp, "t%d", tempCount++);
                 if (p->opr.op[0]->type == typeId && p->opr.op[1]->type == typeId) {
                     // Ambos operandos son variables
                     printf("\t%s = %s || %s\n", temp, p->opr.op[0]->id.name, p->opr.op[1]->id.name);
@@ -550,13 +542,33 @@ int ex(nodeType* p) {
                     printf("\t%s = %d || %s\n", temp, p->opr.op[0]->con.value, p->opr.op[1]->id.name);
                  }
             }
+                break;
+            case NOT:
+                sprintf(temp, "t%d", tempCount++);
+                if (p->opr.op[0]->type == typeId) {
+                    printf("\t%s = not %s\n", temp, p->opr.op[0]->id.name);
+                } else {
+                    printf("\t%s = not t%d\n", temp, tempCount - 2);  // Negar el último temporal generado
+                }
+
             break;
         }
     }
     return 0;
 }
 
+
+
 int main(int argc, char **argv) {
+   // Abrir archivo para escritura
+    FILE *file = fopen("output.txt", "w");
+    if (file == NULL) {
+        perror("No se pudo abrir el archivo");
+        return 1;
+    }
+
+    // Redirigir stdout al archivo
+   freopen("output.txt", "w", stdout); 
    extern FILE* yyin;
    file = fopen("tac_file.txt", "w");
    if (file == NULL) {
@@ -565,6 +577,11 @@ int main(int argc, char **argv) {
    }	
    yyin = fopen(argv[1], "r");
    yyparse();
+   freopen("/dev/tty", "w", stdout);  // En sistemas Unix/Linux
+    // freopen("CON", "w", stdout);  // En Windows
+
+    fclose(file);  // Cerrar el archivo 
+
 
    return 0;
 }
