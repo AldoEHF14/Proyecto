@@ -1,25 +1,35 @@
-        mivariable = 12
-        result = mivariable
-        k = 1
+	mivariable = 12
+	result = mivariable
+	k = 1
 L000:
-        t0 = k <= 5
-        if_false t0 goto L001
-        t1 = 2 * k
-        print t1
-        t2 = k + 1
-        k = t2
-        goto L000
+	t0 = k <= 5
+	if_false t0 goto L001
+	t1 = 2 * k
+	print t1
+	t2 = k + 1
+	k = t2
+	goto L000
 L001:
-        i = 0
+	i = 0
 L002:
-        t3 = i < 5
-        if_false t3 goto L003
-        t4 = 2 * i
-        print t4
-        goto L002
+	t3 = i < 5
+	if_false t3 goto L003
+	t4 = 2 * i
+	print t4
+	goto L002
 L003:
-        t5 = i < 10
-        if_false t5 goto L004
-        print i
+	i = 0
 L004:
-                                          
+	t5 = i * 3
+	print t5
+	t6 = i + 1
+	i = t6
+	t7 = i <= 5
+	if_false t7 goto L005
+	goto L004
+L005:
+	t8 = i < 10
+	if_false t8 goto L006
+	print i
+L006:
+

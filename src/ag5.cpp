@@ -1,3 +1,4 @@
+
 #include <iostream>
 #include <unordered_map>
 #include <fstream>
@@ -63,26 +64,24 @@ void translateTACtoRISCV(string tac) {
     leftVar = token;
     ss >> eq >> op1 >> op >> op2;
 
- // Si uno de los operandos es un número, lo cargamos en un registro
-    if (isdigit(op1[0])) {
+    // Si uno de los operandos es un número, lo cargamos en un registro si no tiene ya un registro asignado
+    if (isdigit(op1[0]) && registerMap.find(op1) == registerMap.end()) {
         cout << "li " << getRegister(op1) << ", " << op1 << endl;
-        //op1 = "temp";
-	op1 = getRegister(op1);
     }
-
-    if (isdigit(op2[0])) {
+    if (isdigit(op2[0]) && registerMap.find(op2) == registerMap.end()) {
         cout << "li " << getRegister(op2) << ", " << op2 << endl;
-        //op2 = "temp";
-	op2 = getRegister(op2);
     }
 
-
-
-
+    // Traducción de operaciones según el operador
     if (op == "*") {
-            cout << "mul " << getRegister(leftVar) << ", " << getRegister(op1) << ", " << getRegister(op2) << endl;
+        cout << "mul " << getRegister(leftVar) << ", " << getRegister(op1) << ", " << getRegister(op2) << endl;
     } else if (op == "+") {
-        cout << "addi " << getRegister(leftVar) << ", " << getRegister(op1) << ", " << op2 << endl;
+        // Aquí, si el operando es un inmediato, se usa `addi`
+        if (isdigit(op2[0])) {
+            cout << "addi " << getRegister(leftVar) << ", " << getRegister(op1) << ", " << op2 << endl;
+        } else {
+            cout << "add " << getRegister(leftVar) << ", " << getRegister(op1) << ", " << getRegister(op2) << endl;
+        }
     } else if (op == "<=") {
         cout << "sle " << getRegister(leftVar) << ", " << getRegister(op1) << ", " << getRegister(op2) << endl;
     } else if (op == "<") {
