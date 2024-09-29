@@ -16,7 +16,7 @@ array:  .word 10, 9, 8, 7, 6, 5, 4, 3, 2, 1
 do_flip:
     li      t1, 0               # t1 = 0 
 S2: bge     t1, a2, S1          # jumps too S1 if i >= num-- 
-    addi    a2, a2 -1           # num--    
+    addi    a2, a2, -1           # num--    
     # swap = list[i]
     slli    t0, t1, 2           # t0 = 4*i
     add     t0, a0, t0          # t0 = a0 + 4*t1
@@ -35,7 +35,7 @@ S2: bge     t1, a2, S1          # jumps too S1 if i >= num--
     slli    t3, a2, 2           # t3 = 4*t1
     add     t3, a0, t3          # t3 = a0 + 4*t3
     sw      t2, 0(t3)           # list[i] = t0
-    addi    t1, t1 1            # t1 = t1 + 1
+    addi    t1, t1, 1            # t1 = t1 + 1
     j       S2                  # jump to S2
     # return 
 S1: jr       ra                 # returns control to caller
