@@ -7,8 +7,11 @@ using namespace std;
 
 // Map para almacenar las variables TAC y sus registros en RISC-V
 unordered_map<string, string> registerMap;
+unordered_map<string, string> stringMap;
+
 string previous_condition;
 int regCounter = 5;  // t0 será el primer registro que usemos
+int stringCounter = 0;
 ofstream outputFile; // Archivo de salida para el ensamblador
 
 // Función que asigna registros temporales a variables
@@ -18,6 +21,16 @@ string getRegister(string var) {
     }
     return registerMap[var];
 }
+
+
+string getStringLabel(string str) {
+	if (stringMap.find(str) == stringMap.end()) {
+       		string label = "msg" + to_string(stringCounter++);
+        	stringMap[str] = label;
+    	}
+    	return stringMap[str];
+}
+
 
 // Función que traduce una línea TAC a RISC-V
 void translateTACtoRISCV(string tac) {
@@ -62,7 +75,7 @@ void translateTACtoRISCV(string tac) {
             outputFile << "\tli " << getRegister(var1) << ", " << value << endl;
         }
 
-        previous_condition = "bgt " + getRegister(var1) + ", " + getRegister(var2) + ", ";
+        previous_condition = "ble " + getRegister(var1) + ", " + getRegister(var2) + ", ";
         return;
     }
 
@@ -75,7 +88,7 @@ void translateTACtoRISCV(string tac) {
             outputFile << "\tli " << getRegister(var1) << ", " << value << endl;
         }
 
-        previous_condition = "bge " + getRegister(var1) + ", " + getRegister(var2) + ", ";
+        previous_condition = "blt " + getRegister(var1) + ", " + getRegister(var2) + ", ";
         return;
     }
 
@@ -86,6 +99,39 @@ void translateTACtoRISCV(string tac) {
         outputFile << "\tj " << label << endl;
         return;
     }
+
+
+// Impresión de cadenas o valores
+    if (token == "print") {
+        string var, var1, var2;
+        ss >> var >> var1 >> var2;
+	cout << var[0] << getRegister(var)  <<endl;
+        //if (isdigit(var[0])) {  // Imprimir un número
+            
+	    outputFile << "\taddi a0, " << getRegister(var) << ", " << "48" << endl;
+	    outputFile << "\tmv a1, a0" << endl;
+	    outputFile << "\taddi sp, sp, -16 " << endl;
+	    outputFile << "\tsb a1, 0(sp) " << endl;
+	    outputFile << "\tmv a1, sp" << endl;
+	   
+
+	   outputFile << "\tli a2, 2" << endl;          // Longitud del valor a imprimir (1 carácter)
+	   outputFile << "\tli a7, 64" << endl;          // Longitud del valor a imprimir (1 carácter)
+	   outputFile << "\tli a0, 1" << endl;          // Longitud del valor a imprimir (1 carácter)
+
+    outputFile << "\tecall" << endl;             // Llamada al sistema para escribir el salto de línea
+    outputFile <<"\taddi sp, sp, 16" << endl;   // Restaurar el puntero de pila
+
+    // Imprimir un salto de línea
+    outputFile << "\tla a1, newline"<<endl;    // Cargar la dirección del salto de línea en a1
+    outputFile << "\tli a2, 2" <<endl;          // Longitud del salto de línea (1 byte)
+    outputFile << "\tli a7, 64" << endl;        // syscall 64: sys_write
+    outputFile << "\tli a0, 1" << endl;          // Descriptor de archivo 1 (salida estándar)
+    outputFile << "\tecall" << endl;             // Llamada al sistema para escribir el salto de línea
+        return;
+    }
+
+
 
     // Operaciones aritméticas y comparaciones
     string leftVar, eq, op1, op, op2;
@@ -115,9 +161,22 @@ void translateTACtoRISCV(string tac) {
 
 // Función que procesa el TAC leído desde el archivo
 void processTAC(const vector<string>& tacLines) {
-    // Agregar cabecera de sección .text
-    outputFile << ".section .text" << endl;
-    outputFile << ".global _start" << endl;
+
+
+// Sección de datos para las cadenas
+    //outputFile << ".section .data" << endl;
+    for (const auto& pair : stringMap) {
+        outputFile << pair.second << ":\n\t.string " << pair.first << endl;
+    }
+	
+	
+	
+// Agregar cabecera de sección .text
+    outputFile << ".data" << endl;
+    outputFile << "\tnewline:" << endl;
+    outputFile << "\t\t.asciz \"\\n\"" << endl;
+    outputFile << "\t.text" << endl;
+    outputFile << "\t.global _start" << endl;
     outputFile << "_start:" << endl;
 
     // Procesar cada línea de TAC
@@ -151,7 +210,7 @@ vector<string> readTACFromFile(const string& filename) {
 
 int main() {
     // Nombre del archivo que contiene el código TAC
-    string tacFilename = "tac_file.txt";
+    string tacFilename = "output.txt";
     // Nombre del archivo de salida ensamblador
     string asmFilename = "output.s";
 

@@ -12,7 +12,8 @@ L000:
 	ble x8, x7, L001
 	li x9, 2
 	mul x10, x9, x7
-	addi a0, x10, 48
+	mv x11, x10
+	addi a0, x11, 48
 	mv a1, a0
 	addi sp, sp, -16 
 	sb a1, 0(sp) 
@@ -27,40 +28,43 @@ L000:
 	li a7, 64
 	li a0, 1
 	ecall
-	li x11, 1
-	addi x12, x7, 1
-	mv x7, x12
+	li x12, 1
+	addi x13, x7, 1
+	mv x7, x13
 	j L000
 L001:
+	li x14, 1
 L002:
-	li x13, 0
+	li x15, 5
+	ble x15, x14, L003
+	li x16, 3
+	mul x17, x16, x14
+	mv x18, x17
+	addi a0, x18, 48
+	mv a1, a0
+	addi sp, sp, -16 
+	sb a1, 0(sp) 
+	mv a1, sp
+	li a2, 2
+	li a7, 64
+	li a0, 1
+	ecall
+	addi sp, sp, 16
+	la a1, newline
+	li a2, 2
+	li a7, 64
+	li a0, 1
+	ecall
+	addi x19, x14, 1
+	mv x14, x19
+	j L002
 L003:
-	li x14, 3
-	mul x15, x13, x14
-	addi a0, x15, 48
-	mv a1, a0
-	addi sp, sp, -16 
-	sb a1, 0(sp) 
-	mv a1, sp
-	li a2, 2
-	li a7, 64
-	li a0, 1
-	ecall
-	addi sp, sp, 16
-	la a1, newline
-	li a2, 2
-	li a7, 64
-	li a0, 1
-	ecall
-	addi x16, x13, 1
-	mv x13, x16
-	li x17, 5
-	ble x17, x13, L004
-	j L003
+	li x20, 1
 L004:
-	li x18, 10
-	blt x18, x13, L005
-	addi a0, x13, 48
+	li x21, 4
+	mul x22, x21, x20
+	mv x23, x22
+	addi a0, x23, 48
 	mv a1, a0
 	addi sp, sp, -16 
 	sb a1, 0(sp) 
@@ -75,6 +79,11 @@ L004:
 	li a7, 64
 	li a0, 1
 	ecall
+	addi x24, x20, 1
+	mv x20, x24
+	li x25, 5
+	ble x25, x20, L005
+	j L004
 L005:
 
 	li a7, 93
