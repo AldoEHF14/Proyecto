@@ -106,30 +106,80 @@ void translateTACtoRISCV(string tac) {
         string var, var1, var2;
         ss >> var >> var1 >> var2;
 	cout << var[0] << getRegister(var)  <<endl;
-        //if (isdigit(var[0])) {  // Imprimir un número
             
-	    outputFile << "\taddi a0, " << getRegister(var) << ", " << "48" << endl;
-	    outputFile << "\tmv a1, a0" << endl;
-	    outputFile << "\taddi sp, sp, -16 " << endl;
-	    outputFile << "\tsb a1, 0(sp) " << endl;
-	    outputFile << "\tmv a1, sp" << endl;
+	outputFile << "\taddi a0, " << getRegister(var) << ", " << "0x30" << endl;
+	        
+
+	outputFile << "\tmv a1, a0" << endl;
+	outputFile << "\taddi sp, sp, -16 " << endl;
+	outputFile << "\tsb a1, 0(sp) " << endl;
+	outputFile << "\tmv a1, sp" << endl;
 	   
 
-	   outputFile << "\tli a2, 2" << endl;          // Longitud del valor a imprimir (1 carácter)
-	   outputFile << "\tli a7, 64" << endl;          // Longitud del valor a imprimir (1 carácter)
-	   outputFile << "\tli a0, 1" << endl;          // Longitud del valor a imprimir (1 carácter)
+        outputFile << "\tli a2, 2" << endl;          // Longitud del valor a imprimir (1 carácter)
+	outputFile << "\tli a7, 64" << endl;          // Longitud del valor a imprimir (1 carácter)
+	outputFile << "\tli a0, 1" << endl;          // Longitud del valor a imprimir (1 carácter)
 
-    outputFile << "\tecall" << endl;             // Llamada al sistema para escribir el salto de línea
-    outputFile <<"\taddi sp, sp, 16" << endl;   // Restaurar el puntero de pila
+        outputFile << "\tecall" << endl;             // Llamada al sistema para escribir el salto de línea
+        outputFile <<"\taddi sp, sp, 16" << endl;   // Restaurar el puntero de pila
 
     // Imprimir un salto de línea
-    outputFile << "\tla a1, newline"<<endl;    // Cargar la dirección del salto de línea en a1
-    outputFile << "\tli a2, 2" <<endl;          // Longitud del salto de línea (1 byte)
-    outputFile << "\tli a7, 64" << endl;        // syscall 64: sys_write
-    outputFile << "\tli a0, 1" << endl;          // Descriptor de archivo 1 (salida estándar)
-    outputFile << "\tecall" << endl;             // Llamada al sistema para escribir el salto de línea
+        outputFile << "\tla a1, newline"<<endl;    // Cargar la dirección del salto de línea en a1
+        outputFile << "\tli a2, 2" <<endl;          // Longitud del salto de línea (1 byte)
+        outputFile << "\tli a7, 64" << endl;        // syscall 64: sys_write
+        outputFile << "\tli a0, 1" << endl;          // Descriptor de archivo 1 (salida estándar)
+        outputFile << "\tecall" << endl;             // Llamada al sistema para escribir el salto de línea
         return;
     }
+
+
+
+
+	
+/*
+// Impresión de números o cadenas
+    if (token == "print") {
+        string var;
+        ss >> var;
+
+        // Verificar si la variable es un número o cadena
+        if (isdigit(var[0])) {  // Es un número
+            outputFile << "\t# Imprimir número: " << var << endl;
+            
+            // Extraer dígitos y convertir a ASCII
+            for (char &digit : var) {
+                outputFile << "\tli a0, " << (digit - '0' + 48) << endl;  // Convertir a ASCII
+                outputFile << "\taddi sp, sp, -16" << endl;
+                outputFile << "\tsb a0, 0(sp)" << endl;
+                outputFile << "\tmv a1, sp" << endl;
+                outputFile << "\tli a2, 1" << endl;  // Longitud de un dígito
+                outputFile << "\tli a7, 64" << endl; // syscall write
+                outputFile << "\tli a0, 1" << endl;  // Descriptor de archivo (stdout)
+                outputFile << "\tecall" << endl;
+                outputFile << "\taddi sp, sp, 16" << endl; // Restaurar pila
+            }
+        } else {  // Es una cadena
+            //outputFile << "\t# Imprimir cadena: " << var << endl;
+            outputFile << "\tla a1, " << getStringLabel(var) << endl;  // Cargar dirección de la cadena
+            outputFile << "\tli a2, " << var.size() << endl;  // Longitud de la cadena
+            outputFile << "\tli a7, 64" << endl;  // syscall write
+            outputFile << "\tli a0, 1" << endl;  // Descriptor de archivo (stdout)
+            outputFile << "\tecall" << endl;
+        }
+
+        // Imprimir salto de línea
+        outputFile << "\tla a1, newline" << endl;    // Cargar dirección del salto de línea
+        outputFile << "\tli a2, 1" << endl;          // Longitud del salto de línea
+        outputFile << "\tli a7, 64" << endl;         // syscall write
+        outputFile << "\tli a0, 1" << endl;          // Descriptor de archivo (stdout)
+        outputFile << "\tecall" << endl;
+
+        return;
+    }*/
+
+
+
+
 
 
 

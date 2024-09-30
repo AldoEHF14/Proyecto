@@ -13,7 +13,7 @@ L000:
 	li x9, 2
 	mul x10, x9, x7
 	mv x11, x10
-	addi a0, x11, 48
+	addi a0, x11, 0x30
 	mv a1, a0
 	addi sp, sp, -16 
 	sb a1, 0(sp) 
@@ -40,7 +40,7 @@ L002:
 	li x16, 3
 	mul x17, x16, x14
 	mv x18, x17
-	addi a0, x18, 48
+	addi a0, x18, 0x30
 	mv a1, a0
 	addi sp, sp, -16 
 	sb a1, 0(sp) 
@@ -64,7 +64,7 @@ L004:
 	li x21, 4
 	mul x22, x21, x20
 	mv x23, x22
-	addi a0, x23, 48
+	addi a0, x23, 0x30
 	mv a1, a0
 	addi sp, sp, -16 
 	sb a1, 0(sp) 
