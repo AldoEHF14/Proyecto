@@ -60,18 +60,22 @@ extern int yydebug;
     WHILE = 261,                   /* WHILE  */
     IF = 262,                      /* IF  */
     PRINT = 263,                   /* PRINT  */
-    IFX = 264,                     /* IFX  */
-    ELSE = 265,                    /* ELSE  */
-    AND = 266,                     /* AND  */
-    OR = 267,                      /* OR  */
-    FOR = 268,                     /* FOR  */
-    DO = 269,                      /* DO  */
-    GE = 270,                      /* GE  */
-    LE = 271,                      /* LE  */
-    EQ = 272,                      /* EQ  */
-    NE = 273,                      /* NE  */
-    UMINUS = 274,                  /* UMINUS  */
-    NOT = 275                      /* NOT  */
+    INT = 264,                     /* INT  */
+    MAIN = 265,                    /* MAIN  */
+    R = 266,                       /* R  */
+    IFX = 267,                     /* IFX  */
+    ELSE = 268,                    /* ELSE  */
+    RETURN = 269,                  /* RETURN  */
+    AND = 270,                     /* AND  */
+    OR = 271,                      /* OR  */
+    FOR = 272,                     /* FOR  */
+    DO = 273,                      /* DO  */
+    GE = 274,                      /* GE  */
+    LE = 275,                      /* LE  */
+    EQ = 276,                      /* EQ  */
+    NE = 277,                      /* NE  */
+    UMINUS = 278,                  /* UMINUS  */
+    NOT = 279                      /* NOT  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -86,18 +90,22 @@ extern int yydebug;
 #define WHILE 261
 #define IF 262
 #define PRINT 263
-#define IFX 264
-#define ELSE 265
-#define AND 266
-#define OR 267
-#define FOR 268
-#define DO 269
-#define GE 270
-#define LE 271
-#define EQ 272
-#define NE 273
-#define UMINUS 274
-#define NOT 275
+#define INT 264
+#define MAIN 265
+#define R 266
+#define IFX 267
+#define ELSE 268
+#define RETURN 269
+#define AND 270
+#define OR 271
+#define FOR 272
+#define DO 273
+#define GE 274
+#define LE 275
+#define EQ 276
+#define NE 277
+#define UMINUS 278
+#define NOT 279
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
@@ -111,7 +119,7 @@ union YYSTYPE
     char name[50];               
     nodeType *nPtr;             /* Apuntador a nodo */
 
-#line 115 "y.tab.h"
+#line 123 "y.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

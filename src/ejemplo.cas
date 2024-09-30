@@ -1,28 +1,27 @@
-int main(){
+int main(){	
+	
 	mivariable = 12;
 
 	result = mivariable;
 
 	for (k=1; k<=5; k=k+1) {
-	    print 2*k;
+	    r1 = 2*k;
+	    print r1;
 	}
 
-	i = 0;
-	while (i < 5) {
-	    print 2*i; 
+	i = 1;
+	while (i <= 5) {
+	    r2 = 3*i;
+	    print r2;
+	    i = i + 1; 
 	}
 	
-	i = 0;
+	j = 1;
 	do {
-	    print i * 3;
-	    i = i + 1;
-	} while (i <= 5);
+	    r3 = 4*j;
+	    print r3;
+	    j = j + 1;
+	} while (j <= 5);
 	
-	if (i < 10) {
-		print i;
-	} 
-
-
 	return 0;
 }
-
