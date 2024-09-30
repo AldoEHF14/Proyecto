@@ -13,7 +13,7 @@ L000:
 L001:
 	i = 1
 L002:
-	t3 = i <= 5
+	t3 = i <= 3
 	if_false t3 goto L003
 	t4 = 3 * i
 	r2 = t4
@@ -24,12 +24,11 @@ L002:
 L003:
 	j = 1
 L004:
-	t6 = 4 * j
-	r3 = t6
+	r3 = j
 	print r3
-	t7 = j + 1
-	j = t7
-	t8 = j <= 5
-	if_false t8 goto L005
+	t6 = j + 1
+	j = t6
+	t7 = j <= 10
+	if_false t7 goto L005
 	goto L004
 L005:

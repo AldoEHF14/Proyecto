@@ -473,8 +473,8 @@ int yy_flex_debug = 0;
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
-#line 1 "casio_plus.lex"
-#line 2 "casio_plus.lex"
+#line 1 "lexical_def.lex"
+#line 2 "lexical_def.lex"
 #include <stdlib.h>
 #include "y.tab.h"
 #include <string.h>
@@ -704,7 +704,7 @@ YY_DECL
 		}
 
 	{
-#line 18 "casio_plus.lex"
+#line 18 "lexical_def.lex"
 
 
 #line 711 "lex.yy.c"
@@ -766,87 +766,87 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 20 "casio_plus.lex"
+#line 20 "lexical_def.lex"
 { return *yytext; }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 22 "casio_plus.lex"
+#line 22 "lexical_def.lex"
 return GE;
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 23 "casio_plus.lex"
+#line 23 "lexical_def.lex"
 return LE;
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 24 "casio_plus.lex"
+#line 24 "lexical_def.lex"
 return EQ;
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 25 "casio_plus.lex"
+#line 25 "lexical_def.lex"
 return NE;
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 26 "casio_plus.lex"
+#line 26 "lexical_def.lex"
 return AND;
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 27 "casio_plus.lex"
+#line 27 "lexical_def.lex"
 return OR;
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 28 "casio_plus.lex"
+#line 28 "lexical_def.lex"
 return NOT;
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 30 "casio_plus.lex"
+#line 30 "lexical_def.lex"
 return WHILE;
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 31 "casio_plus.lex"
+#line 31 "lexical_def.lex"
 return IF;
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 32 "casio_plus.lex"
+#line 32 "lexical_def.lex"
 return PRINT;
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 33 "casio_plus.lex"
+#line 33 "lexical_def.lex"
 return FOR;
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 34 "casio_plus.lex"
+#line 34 "lexical_def.lex"
 return DO;
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 35 "casio_plus.lex"
+#line 35 "lexical_def.lex"
 return INT;
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 36 "casio_plus.lex"
+#line 36 "lexical_def.lex"
 return MAIN;
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 37 "casio_plus.lex"
+#line 37 "lexical_def.lex"
 return R;
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 41 "casio_plus.lex"
+#line 41 "lexical_def.lex"
 { 
                             strcpy(yylval.name, yytext);
                             return VARIABLE;
@@ -854,12 +854,12 @@ YY_RULE_SETUP
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 46 "casio_plus.lex"
+#line 46 "lexical_def.lex"
 { yylval.fValue = atof(yytext); return FLOAT;}
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 49 "casio_plus.lex"
+#line 49 "lexical_def.lex"
 {
             yylval.iValue = atoi(yytext);
             return INTEGER;
@@ -868,12 +868,12 @@ YY_RULE_SETUP
 case 20:
 /* rule 20 can match eol */
 YY_RULE_SETUP
-#line 54 "casio_plus.lex"
+#line 54 "lexical_def.lex"
 ;
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 56 "casio_plus.lex"
+#line 56 "lexical_def.lex"
 { 
                 fprintf(stderr, "Unrecognized character: %s\n", yytext);
                 yyerror("Unrecognized character.");
@@ -881,7 +881,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 61 "casio_plus.lex"
+#line 61 "lexical_def.lex"
 ECHO;
 	YY_BREAK
 #line 888 "lex.yy.c"
@@ -1889,7 +1889,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 61 "casio_plus.lex"
+#line 61 "lexical_def.lex"
 
 
 extern "C" int yywrap(void) {

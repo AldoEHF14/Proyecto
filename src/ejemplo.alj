@@ -10,7 +10,7 @@ int main(){
 	}
 
 	i = 1;
-	while (i <= 5) {
+	while (i <= 3) {
 	    r2 = 3*i;
 	    print r2;
 	    i = i + 1; 
@@ -18,10 +18,10 @@ int main(){
 	
 	j = 1;
 	do {
-	    r3 = 4*j;
+	    r3 = j;
 	    print r3;
 	    j = j + 1;
-	} while (j <= 5);
+	} while (j <= 10);
 	
 	return 0;
 }

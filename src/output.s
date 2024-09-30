@@ -35,7 +35,7 @@ L000:
 L001:
 	li x14, 1
 L002:
-	li x15, 5
+	li x15, 3
 	ble x15, x14, L003
 	li x16, 3
 	mul x17, x16, x14
@@ -61,10 +61,8 @@ L002:
 L003:
 	li x20, 1
 L004:
-	li x21, 4
-	mul x22, x21, x20
-	mv x23, x22
-	addi a0, x23, 0x30
+	mv x21, x20
+	addi a0, x21, 0x30
 	mv a1, a0
 	addi sp, sp, -16 
 	sb a1, 0(sp) 
@@ -79,10 +77,10 @@ L004:
 	li a7, 64
 	li a0, 1
 	ecall
-	addi x24, x20, 1
-	mv x20, x24
-	li x25, 5
-	ble x25, x20, L005
+	addi x22, x20, 1
+	mv x20, x22
+	li x23, 10
+	ble x23, x20, L005
 	j L004
 L005:
 

@@ -67,14 +67,14 @@
 
 
 /* First part of user prologue.  */
-#line 1 "casio_plus.y"
+#line 1 "parser_tree.y"
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
 #include <string>
 #include <map>
-#include "casio_plus.h"
+#include "parser_tree.h"
 #include "lex.yy.c"
 
 static int lbl;
@@ -191,7 +191,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 24 "casio_plus.y"
+#line 24 "parser_tree.y"
 
     int iValue;
     float fValue;			 /* Valor entero */
@@ -1319,229 +1319,229 @@ yyreduce:
   switch (yyn)
     {
   case 2: /* program: main_function  */
-#line 56 "casio_plus.y"
+#line 56 "parser_tree.y"
                          { exit(0); }
 #line 1325 "y.tab.c"
     break;
 
   case 4: /* function: function stmt  */
-#line 65 "casio_plus.y"
+#line 65 "parser_tree.y"
                            { ex((yyvsp[0].nPtr)); freeNode((yyvsp[0].nPtr)); }
 #line 1331 "y.tab.c"
     break;
 
   case 6: /* stmt: ';'  */
-#line 70 "casio_plus.y"
+#line 70 "parser_tree.y"
                                                                                 { (yyval.nPtr) = opr(';', 2, NULL, NULL); }
 #line 1337 "y.tab.c"
     break;
 
   case 7: /* stmt: expr ';'  */
-#line 71 "casio_plus.y"
+#line 71 "parser_tree.y"
                                                                                 { (yyval.nPtr) = (yyvsp[-1].nPtr); }
 #line 1343 "y.tab.c"
     break;
 
   case 8: /* stmt: PRINT expr ';'  */
-#line 72 "casio_plus.y"
+#line 72 "parser_tree.y"
                                                                                 { (yyval.nPtr) = opr(PRINT, 1, (yyvsp[-1].nPtr)); }
 #line 1349 "y.tab.c"
     break;
 
   case 9: /* stmt: VARIABLE '=' expr ';'  */
-#line 73 "casio_plus.y"
+#line 73 "parser_tree.y"
                                                                                 { (yyval.nPtr) = opr('=', 2, id((yyvsp[-3].name)), (yyvsp[-1].nPtr)); }
 #line 1355 "y.tab.c"
     break;
 
   case 10: /* stmt: WHILE '(' expr ')' stmt  */
-#line 74 "casio_plus.y"
+#line 74 "parser_tree.y"
                                                                                 { (yyval.nPtr) = opr(WHILE, 2, (yyvsp[-2].nPtr), (yyvsp[0].nPtr)); }
 #line 1361 "y.tab.c"
     break;
 
   case 11: /* stmt: IF '(' expr ')' stmt  */
-#line 75 "casio_plus.y"
+#line 75 "parser_tree.y"
                                                                                 { (yyval.nPtr) = opr(IF, 2, (yyvsp[-2].nPtr), (yyvsp[0].nPtr)); }
 #line 1367 "y.tab.c"
     break;
 
   case 12: /* stmt: IF '(' expr ')' stmt ELSE stmt  */
-#line 76 "casio_plus.y"
+#line 76 "parser_tree.y"
                                                                                 { (yyval.nPtr) = opr(IF, 3, (yyvsp[-4].nPtr), (yyvsp[-2].nPtr), (yyvsp[0].nPtr)); }
 #line 1373 "y.tab.c"
     break;
 
   case 13: /* stmt: FOR '(' expr_init ';' expr_cond ';' expr_cnt ')' stmt  */
-#line 77 "casio_plus.y"
+#line 77 "parser_tree.y"
                                                                                 { (yyval.nPtr) = opr(FOR, 4, (yyvsp[-6].nPtr), (yyvsp[-4].nPtr), (yyvsp[-2].nPtr), (yyvsp[0].nPtr)); }
 #line 1379 "y.tab.c"
     break;
 
   case 14: /* stmt: DO stmt WHILE '(' expr ')' ';'  */
-#line 78 "casio_plus.y"
+#line 78 "parser_tree.y"
                                                                                 { (yyval.nPtr) = opr(DO, 2, (yyvsp[-5].nPtr), (yyvsp[-2].nPtr)); }
 #line 1385 "y.tab.c"
     break;
 
   case 15: /* stmt: '{' stmt_list '}'  */
-#line 79 "casio_plus.y"
+#line 79 "parser_tree.y"
                                                                                 { (yyval.nPtr) = (yyvsp[-1].nPtr); }
 #line 1391 "y.tab.c"
     break;
 
   case 16: /* expr_init: VARIABLE '=' VARIABLE  */
-#line 85 "casio_plus.y"
+#line 85 "parser_tree.y"
                                         { (yyval.nPtr) = opr('=', 2, id((yyvsp[-2].name)), id((yyvsp[0].name))); }
 #line 1397 "y.tab.c"
     break;
 
   case 17: /* expr_init: VARIABLE '=' INTEGER  */
-#line 86 "casio_plus.y"
+#line 86 "parser_tree.y"
                                         { (yyval.nPtr) = opr('=', 2, id((yyvsp[-2].name)), con((yyvsp[0].iValue)));}
 #line 1403 "y.tab.c"
     break;
 
   case 18: /* expr_cond: expr  */
-#line 90 "casio_plus.y"
+#line 90 "parser_tree.y"
                                         { (yyval.nPtr) = (yyvsp[0].nPtr); }
 #line 1409 "y.tab.c"
     break;
 
   case 19: /* expr_cnt: VARIABLE '=' expr  */
-#line 94 "casio_plus.y"
+#line 94 "parser_tree.y"
                                         { (yyval.nPtr) = opr('=', 2, id((yyvsp[-2].name)), (yyvsp[0].nPtr)); }
 #line 1415 "y.tab.c"
     break;
 
   case 20: /* expr_cnt: expr  */
-#line 95 "casio_plus.y"
+#line 95 "parser_tree.y"
                                         { (yyval.nPtr) = (yyvsp[0].nPtr); }
 #line 1421 "y.tab.c"
     break;
 
   case 21: /* stmt_list: stmt  */
-#line 100 "casio_plus.y"
+#line 100 "parser_tree.y"
                                  { (yyval.nPtr) = (yyvsp[0].nPtr); }
 #line 1427 "y.tab.c"
     break;
 
   case 22: /* stmt_list: stmt_list stmt  */
-#line 101 "casio_plus.y"
+#line 101 "parser_tree.y"
                                  { (yyval.nPtr) = opr(';', 2, (yyvsp[-1].nPtr), (yyvsp[0].nPtr)); }
 #line 1433 "y.tab.c"
     break;
 
   case 23: /* expr: INTEGER  */
-#line 105 "casio_plus.y"
+#line 105 "parser_tree.y"
                                  { (yyval.nPtr) = con((yyvsp[0].iValue)); 	     }
 #line 1439 "y.tab.c"
     break;
 
   case 24: /* expr: FLOAT  */
-#line 106 "casio_plus.y"
+#line 106 "parser_tree.y"
                                  { (yyval.nPtr) = conf((yyvsp[0].fValue));  	     }
 #line 1445 "y.tab.c"
     break;
 
   case 25: /* expr: VARIABLE  */
-#line 107 "casio_plus.y"
+#line 107 "parser_tree.y"
                                  { (yyval.nPtr) = id((yyvsp[0].name)); 	     }
 #line 1451 "y.tab.c"
     break;
 
   case 26: /* expr: '-' expr  */
-#line 108 "casio_plus.y"
+#line 108 "parser_tree.y"
                                  { (yyval.nPtr) = opr(UMINUS, 1, (yyvsp[0].nPtr));  }
 #line 1457 "y.tab.c"
     break;
 
   case 27: /* expr: expr '+' expr  */
-#line 109 "casio_plus.y"
+#line 109 "parser_tree.y"
                                  { (yyval.nPtr) = opr('+', 2, (yyvsp[-2].nPtr), (yyvsp[0].nPtr)); }
 #line 1463 "y.tab.c"
     break;
 
   case 28: /* expr: expr '-' expr  */
-#line 110 "casio_plus.y"
+#line 110 "parser_tree.y"
                                  { (yyval.nPtr) = opr('-', 2, (yyvsp[-2].nPtr), (yyvsp[0].nPtr)); }
 #line 1469 "y.tab.c"
     break;
 
   case 29: /* expr: expr '*' expr  */
-#line 111 "casio_plus.y"
+#line 111 "parser_tree.y"
                                  { (yyval.nPtr) = opr('*', 2, (yyvsp[-2].nPtr), (yyvsp[0].nPtr)); }
 #line 1475 "y.tab.c"
     break;
 
   case 30: /* expr: expr '/' expr  */
-#line 112 "casio_plus.y"
+#line 112 "parser_tree.y"
                                  { (yyval.nPtr) = opr('/', 2, (yyvsp[-2].nPtr), (yyvsp[0].nPtr)); }
 #line 1481 "y.tab.c"
     break;
 
   case 31: /* expr: expr '<' expr  */
-#line 113 "casio_plus.y"
+#line 113 "parser_tree.y"
                                  { (yyval.nPtr) = opr('<', 2, (yyvsp[-2].nPtr), (yyvsp[0].nPtr)); }
 #line 1487 "y.tab.c"
     break;
 
   case 32: /* expr: expr '>' expr  */
-#line 114 "casio_plus.y"
+#line 114 "parser_tree.y"
                                  { (yyval.nPtr) = opr('>', 2, (yyvsp[-2].nPtr), (yyvsp[0].nPtr)); }
 #line 1493 "y.tab.c"
     break;
 
   case 33: /* expr: expr ':' expr  */
-#line 115 "casio_plus.y"
+#line 115 "parser_tree.y"
                                  { (yyval.nPtr) = opr(':', 2, (yyvsp[-2].nPtr), (yyvsp[0].nPtr)); }
 #line 1499 "y.tab.c"
     break;
 
   case 34: /* expr: expr GE expr  */
-#line 116 "casio_plus.y"
+#line 116 "parser_tree.y"
                                  { (yyval.nPtr) = opr(GE, 2, (yyvsp[-2].nPtr), (yyvsp[0].nPtr));  }
 #line 1505 "y.tab.c"
     break;
 
   case 35: /* expr: expr LE expr  */
-#line 117 "casio_plus.y"
+#line 117 "parser_tree.y"
                                  { (yyval.nPtr) = opr(LE, 2, (yyvsp[-2].nPtr), (yyvsp[0].nPtr));  }
 #line 1511 "y.tab.c"
     break;
 
   case 36: /* expr: expr NE expr  */
-#line 118 "casio_plus.y"
+#line 118 "parser_tree.y"
                                  { (yyval.nPtr) = opr(NE, 2, (yyvsp[-2].nPtr), (yyvsp[0].nPtr));  }
 #line 1517 "y.tab.c"
     break;
 
   case 37: /* expr: expr EQ expr  */
-#line 119 "casio_plus.y"
+#line 119 "parser_tree.y"
                                  { (yyval.nPtr) = opr(EQ, 2, (yyvsp[-2].nPtr), (yyvsp[0].nPtr));  }
 #line 1523 "y.tab.c"
     break;
 
   case 38: /* expr: expr AND expr  */
-#line 120 "casio_plus.y"
+#line 120 "parser_tree.y"
                                  { (yyval.nPtr) = opr(AND, 2, (yyvsp[-2].nPtr), (yyvsp[0].nPtr)); }
 #line 1529 "y.tab.c"
     break;
 
   case 39: /* expr: expr OR expr  */
-#line 121 "casio_plus.y"
+#line 121 "parser_tree.y"
                                  { (yyval.nPtr) = opr(OR, 2, (yyvsp[-2].nPtr), (yyvsp[0].nPtr));  }
 #line 1535 "y.tab.c"
     break;
 
   case 40: /* expr: NOT expr  */
-#line 122 "casio_plus.y"
+#line 122 "parser_tree.y"
                                  { (yyval.nPtr) = opr(NOT, 1, (yyvsp[0].nPtr));     }
 #line 1541 "y.tab.c"
     break;
 
   case 41: /* expr: '(' expr ')'  */
-#line 123 "casio_plus.y"
+#line 123 "parser_tree.y"
                                  { (yyval.nPtr) = (yyvsp[-1].nPtr); 		     }
 #line 1547 "y.tab.c"
     break;
@@ -1740,7 +1740,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 126 "casio_plus.y"
+#line 126 "parser_tree.y"
 
 
 
