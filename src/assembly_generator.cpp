@@ -1,129 +1,199 @@
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <ctype.h>  // Incluir este encabezado para usar isdigit()
 
-#define MAX_REGS 7        // Número de registros temporales disponibles en RISC-V (t0 a t6)
-#define MAX_LINE_LENGTH 100  // Longitud máxima de cada línea del archivo
-#define MAX_VARS 100     // Máximo número de variables
+#include <iostream>
+#include <unordered_map>
+#include <fstream>
+#include <sstream>
+#include <vector>
+using namespace std;
 
-int reg_count = 0;   // Contador de registros
-char* regs[MAX_REGS] = {"t0", "t1", "t2", "t3", "t4", "t5", "t6"};  // Nombres de los registros temporales
-char* var_names[MAX_VARS]; // Arreglo para almacenar nombres de variables
-char* var_regs[MAX_VARS]; // Arreglo para almacenar el registro asignado a cada variable
-int var_count = 0; // Contador de variables
+// Map para almacenar las variables TAC y sus registros en RISC-V
+unordered_map<string, string> registerMap;
+string previous_condition;
+int regCounter = 5;  // t0 será el primer registro que usemos
 
-// Función para obtener el siguiente registro disponible
-char* get_next_reg() {
-    if (reg_count >= MAX_REGS) {
-        printf("Error: No hay registros disponibles\n");
-        return NULL;
+// Función que asigna registros temporales a variables
+string getRegister(string var) {
+    if (registerMap.find(var) == registerMap.end()) {
+        registerMap[var] = "x" + to_string(regCounter++);
     }
-    return regs[reg_count++];
+    return registerMap[var];
 }
 
-// Función para liberar un registro
-void free_reg() {
-    if (reg_count > 0) {
-        reg_count--;
+// Función que traduce una línea TAC a RISC-V
+void translateTACtoRISCV(string tac) {
+    stringstream ss(tac);
+    string token;
+    ss >> token;
+
+    // Asignación de constante (ejemplo: mivariable = 12)
+    if (tac.find('=') != string::npos && tac.find('+') == string::npos && tac.find('*') == string::npos && tac.find("<=") == string::npos && tac.find("<") == string::npos) {
+        string var = token.substr(0, token.find('='));
+        string value;
+        ss >> value >> value;  // Obtenemos el valor después del '='
+        if (isdigit(value[0])) {
+            cout << "\tli " << getRegister(var) << ", " << value << endl;
+        } else {
+            cout << "\tmv " << getRegister(var) << ", " << getRegister(value) << endl;
+        }
+        return;
+    }
+
+    // Caso de etiquetas (ejemplo: L000:)
+    if (token.back() == ':') {
+        cout << token << endl;
+        return;
+    }
+
+    // Condicionales (ejemplo: if_false t0 goto L001)
+    if (token == "if_false") {
+        string cond, junk, label;
+        ss >> cond >> junk >> label;
+        //cout << "beqz " << getRegister(cond) << ", " << label << endl;
+
+string new_instruction = previous_condition + label;
+        cout << "\t"+new_instruction << endl;
+
+        return;
+    }
+
+
+	
+if (tac.find("<=") != string::npos) {
+        string var1 = token;
+        string op, var2, label, value;
+        ss >> op >> var2 >> label >> value;
+
+	
+// Mostrar `li` si el operando es un inmediato
+ 	//cout << value << endl;
+        if (isdigit(value[0]) && registerMap.find(value) == registerMap.end()) {
+            cout << "\tli " << getRegister(var1) << ", " << value << endl;
+	    //return;
+        }
+
+        previous_condition = "bgt " + getRegister(var1) + ", " + getRegister(var2) + ", ";
+        //cout << previous_condition << label << endl;  // Mostrar la condición completa
+
+
+        //cout << "\t\tble " << getRegister(var1) << ", " << getRegister(var2) << ", " << label << "       # Si " << getRegister(var1) << " <= " << getRegister(var2) << ", saltar a " << label << endl;
+        //previous_condition = "ble " + getRegister(var1) + ", " + getRegister(var2) + ", "; 
+       return; 
+    }
+
+
+if (tac.find("<") != string::npos) {
+        string var1 = token;
+        string op, var2, label, value;
+        ss >> op >> var2 >> label >> value;
+
+	
+// Mostrar `li` si el operando es un inmediato
+ 	//cout << value << endl;
+        if (isdigit(value[0]) && registerMap.find(value) == registerMap.end()) {
+            cout << "\tli " << getRegister(var1) << ", " << value << endl;
+	    //return;
+        }
+
+        previous_condition = "bge " + getRegister(var1) + ", " + getRegister(var2) + ", ";
+        //cout << previous_condition << label << endl;  // Mostrar la condición completa
+
+
+        //cout << "\tble " << getRegister(var1) << ", " << getRegister(var2) << ", " << label << "       # Si " << getRegister(var1) << " <= " << getRegister(var2) << ", saltar a " << label << endl;
+        //previous_condition = "ble " + getRegister(var1) + ", " + getRegister(var2) + ", "; 
+       return; 
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+    // Saltos (ejemplo: goto L001)
+    if (token == "goto") {
+        string label;
+        ss >> label;
+        cout << "\tj " << label << endl;
+        return;
+    }
+
+    // Operaciones aritméticas y comparaciones
+    string leftVar, eq, op1, op, op2;
+    leftVar = token;
+    ss >> eq >> op1 >> op >> op2;
+
+    // Si uno de los operandos es un número, lo cargamos en un registro si no tiene ya un registro asignado
+    if (isdigit(op1[0]) && registerMap.find(op1) == registerMap.end()) {
+        cout << "\tli " << getRegister(op1) << ", " << op1 << endl;
+    }
+    if (isdigit(op2[0]) && registerMap.find(op2) == registerMap.end()) {
+        cout << "\tli " << getRegister(op2) << ", " << op2 << endl;
+    }
+
+    // Traducción de operaciones según el operador
+    if (op == "*") {
+        cout << "\tmul " << getRegister(leftVar) << ", " << getRegister(op1) << ", " << getRegister(op2) << endl;
+    } else if (op == "+") {
+        // Aquí, si el operando es un inmediato, se usa `addi`
+        if (isdigit(op2[0])) {
+            cout << "\taddi " << getRegister(leftVar) << ", " << getRegister(op1) << ", " << op2 << endl;
+        } else {
+            cout << "\tadd " << getRegister(leftVar) << ", " << getRegister(op1) << ", " << getRegister(op2) << endl;
+        }
+    } else if (op == "<=") {
+        //cout << "sle " << getRegister(leftVar) << ", " << getRegister(op1) << ", " << getRegister(op2) << endl;
+    	
+    } else if (op == "<") {
+        cout << "slt " << getRegister(leftVar) << ", " << getRegister(op1) << ", " << getRegister(op2) << endl;
+    } else if (op == "print") {
+        // Pseudo-instrucción para imprimir (debería ser reemplazada con syscall o equivalente)
+        cout << "# print " << getRegister(op1) << endl;
+    }
+}
+
+// Función que procesa el TAC leído desde el archivo
+void processTAC(const vector<string>& tacLines) {
+    for (const string& line : tacLines) {
+        if (!line.empty()) {
+            translateTACtoRISCV(line);
+        }
+    }
+}
+
+// Función para leer el archivo TAC y almacenar las líneas en un vector
+vector<string> readTACFromFile(const string& filename) {
+    vector<string> tacLines;
+    ifstream file(filename);
+    string line;
+    if (file.is_open()) {
+        while (getline(file, line)) {
+            tacLines.push_back(line);
+        }
+        file.close();
     } else {
-        printf("Error: No hay registros para liberar\n");
+        cerr << "Error al abrir el archivo: " << filename << endl;
     }
-}
-
-// Función para mapear una variable a un registro
-char* map_var_to_reg(char* var) {
-    for (int i = 0; i < var_count; i++) {
-        if (strcmp(var_names[i], var) == 0) {
-            return var_regs[i];
-        }
-    }
-    if (var_count < MAX_VARS) {
-        var_names[var_count] = strdup(var);
-        var_regs[var_count] = get_next_reg();
-        return var_regs[var_count++];
-    }
-    printf("Error: Se excedió el número máximo de variables.\n");
-    return NULL;
-}
-
-// Función para traducir una instrucción de tres direcciones a ensamblador RISC-V
-void translate_three_addr(char* line) {
-    char var[20], op[5], arg1[20], arg2[20], label[20];
-    // Inicializar las cadenas
-    var[0] = op[0] = arg1[0] = arg2[0] = label[0] = '\0';
-        // Verificar si la línea es un label
-	//if (sscanf(line, "%[^:]:", label) == 1) {
-	//	printf("%s:\n", label);  // Imprimir el label
-    	//}
-    // Verificar si es una asignación (var = expresión)
-    if (sscanf(line, "%s = %s %s %s", var, arg1, op, arg2) == 4) {
-        // Es una operación aritmética o lógica
-        char* reg1 = map_var_to_reg(arg1);
-        char* reg2 = map_var_to_reg(arg2);
-        char* reg_result = map_var_to_reg(var);
-        
-        if (reg1 && reg2 && reg_result) {
-            if (strcmp(op, "+") == 0) {
-                printf("add %s, %s, %s\n", reg_result, reg1, reg2);  // Suma
-            } else if (strcmp(op, "-") == 0) {
-                printf("sub %s, %s, %s\n", reg_result, reg1, reg2);  // Resta
-            } else if (strcmp(op, "*") == 0) {
-                printf("mul %s, %s, %s\n", reg_result, reg1, reg2);  // Multiplicación
-            } else if (strcmp(op, "<=") == 0) {
-                printf("sle %s, %s, %s\n", reg_result, reg1, reg2);  // Menor o igual
-            } else if (strcmp(op, "<") == 0) {
-                printf("slt %s, %s, %s\n", reg_result, reg1, reg2);  // Menor que
-            }
-        }
-        free_reg();  // Liberar registros después de la operación
-        free_reg();
-    }
-    // Verificar si es una asignación simple (var = arg1)
-    else if (sscanf(line, "%s = %s", var, arg1) == 2) {
-        char* reg = get_next_reg();
-        if (reg) {
-            printf("li %s, %s\n", reg, arg1);  // Cargar inmediato: li t0, 12
-            map_var_to_reg(var);
-        }
-        free_reg();  // Liberar el registro después de usarlo
-    }
-    // Verificar si es un salto condicional
-    else if (sscanf(line, "if_false %s goto %s", arg1, label) == 2) {
-        char* reg = map_var_to_reg(arg1);
-        if (reg) {
-            printf("beqz %s, %s\n", reg, label);  // Si es igual a 0: beqz t0, L001
-        }
-    }
-    // Verificar si es un salto incondicional
-    else if (sscanf(line, "goto %s", label) == 1) {
-        printf("j %s\n", label);  // Salto: j L000
-    }
-    // Verificar si es una impresión
-    else if (sscanf(line, "print %s", arg1) == 1) {
-        char* reg = map_var_to_reg(arg1);
-        if (reg) {
-            printf("print %s\n", reg);  // Suposición: instrucción ficticia de print
-        }
-    }
+    return tacLines;
 }
 
 int main() {
-    FILE *file;
-    char line[MAX_LINE_LENGTH];
-    // Abrir el archivo de tres direcciones para leer
-    file = fopen("tac_file.txt", "r");
-    if (!file) {
-        printf("Error: No se pudo abrir el archivo.\n");
-        return 1;
-    }
-    // Leer cada línea del archivo y traducirla
-    while (fgets(line, sizeof(line), file)) {
-        // Eliminar el salto de línea al final
-        line[strcspn(line, "\n")] = 0;
-        // Traducir la instrucción a ensamblador
-        translate_three_addr(line);
-    }
-    fclose(file);
+    // Nombre del archivo que contiene el código TAC
+    string filename = "tac_file.txt";
+
+    // Leer el archivo TAC
+    vector<string> tacLines = readTACFromFile(filename);
+
+    // Procesar el TAC y generar el código RISC-V
+    processTAC(tacLines);
+
     return 0;
 }
+
